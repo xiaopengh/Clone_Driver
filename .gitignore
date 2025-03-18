@@ -1,0 +1,5 @@
+# ignore venv folder
+venv/
+
+# ignore mc3 data files
+data/
