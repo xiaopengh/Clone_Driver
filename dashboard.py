@@ -131,10 +131,59 @@ summary_right_negbin = pn.pane.Markdown(f"### Right Data Negative Binomial Regre
 data_table_left = pn.widgets.Tabulator(data_left.head(int(len(data_left)*0.3)), pagination='remote', page_size=10, height=300)
 data_table_right = pn.widgets.Tabulator(data_right.head(int(len(data_right)*0.3)), pagination='remote', page_size=10, height=300)
 
+# # === Summary sets mean, median and variance ===
+# summary_stats_left = pd.DataFrame({
+#     "Statistic": ["Mean", 'Median', "Variance"],
+#     "Clonal Summary Left": [
+#         clonal_summary_left.mean().round(2), 
+#         clonal_summary_left.median().round(2), 
+#         clonal_summary_left.var().round(2)
+#     ],
+#     "Clonal Summary Right": [
+#         clonal_summary_right.mean().round(2), 
+#         clonal_summary_right.median().round(2), 
+#         clonal_summary_right.var().round(2)
+#     ]
+# })
+
+ndecimal = 2
+
+summary_stats_left = pd.DataFrame({
+    "Statistic": ["Mean", 'Median', "Variance"],
+    "Clonal": [
+        clonal_summary_left["Clonal Count"].mean().round(ndecimal),
+        clonal_summary_left["Clonal Count"].median().round(ndecimal),
+        clonal_summary_left["Clonal Count"].var().round(ndecimal)
+    ],
+    "Sub-Clonal": [
+        clonal_summary_left["Sub-Clonal Count"].mean().round(ndecimal),
+        clonal_summary_left["Sub-Clonal Count"].median().round(ndecimal),
+        clonal_summary_left["Sub-Clonal Count"].var().round(ndecimal)
+    ]
+})
+
+summary_stats_right = pd.DataFrame({
+    "Statistic": ["Mean", 'Median', "Variance"],
+    "Clonal": [
+        clonal_summary_right["Clonal Count"].mean().round(ndecimal),
+        clonal_summary_right["Clonal Count"].median().round(ndecimal),
+        clonal_summary_right["Clonal Count"].var().round(ndecimal)
+    ],
+    "Sub-Clonal": [
+        clonal_summary_right["Sub-Clonal Count"].mean().round(ndecimal),
+        clonal_summary_right["Sub-Clonal Count"].median().round(ndecimal),
+        clonal_summary_right["Sub-Clonal Count"].var().round(ndecimal)
+    ]
+})
+
+stats_table_left = pn.widgets.Tabulator(summary_stats_left, pagination='remote', page_size=10, height=300)
+stats_table_right = pn.widgets.Tabulator(summary_stats_right, pagination='remote', page_size=10, height=300)
+
 # === Dashboard Layout ===
 title = pn.pane.Markdown("# 🧬 Tumor Clonality Dashboard", margin=(0,0,20,0), styles={'color':'#2F80ED'})
 
 header_style = {'background': '#F0F8FF', 'padding': '10px', 'border-radius': '5px'}
+comment_style = {'background': '#e6ffe6', 'padding': '10px', 'border-radius': '5px', 'font-size': '16px'}
 
 dashboard = pn.Column(
     title,
@@ -142,12 +191,42 @@ dashboard = pn.Column(
         pn.Column(pn.pane.Markdown("### Left Dataset Overview", styles=header_style), data_table_left),
         pn.Column(pn.pane.Markdown("### Right Dataset Overview", styles=header_style), data_table_right)
     ),
+    # pn.pane.Markdown("## Basic Data Statistics", styles=header_style),
+    # pn.widgets.Tabulator(summary_stats, pagination='remote', page_size=10, height=300),
+    pn.Row(
+        pn.Column(pn.pane.Markdown("### Left Data Summary Statistics", styles=header_style), stats_table_left),
+        pn.Column(pn.pane.Markdown("### Right Data Summary Statistics", styles=header_style), stats_table_right),
+        pn.pane.Markdown(
+            "Both datasets have clear evidence of **overdispersion**, as the variance is much larger than the mean. "
+            "This is expected in count data, and is why we are using **Poisson** and **Negative Binomial** regression models.",
+            styles=comment_style,
+            width=300 # Adjust width to fit text
+            )
+    ),
     # pn.pane.Markdown("## Hugo Symbol Distribution", styles=header_style),
     # pn.Row(pie_fig_left, pie_fig_right),
     pn.pane.Markdown("## Clonality Counts", styles=header_style),
-    pn.Row(bar_fig_left, bar_fig_right),
+    pn.Row(
+        bar_fig_left, 
+        bar_fig_right,
+        pn.pane.Markdown(
+            "The bar plots on the left show the counts of clonal and sub-clonal mutations in the datasets. "
+            "The left dataset has more clonal mutations, while the right dataset has more sub-clonal mutations due to different settings of $H_0$.",
+            styles=comment_style,
+            width=300 # Adjust width to fit text
+            )
+        ),
     pn.pane.Markdown("## Poisson Regression Model Summaries", styles=header_style),
-    pn.Row(summary_left, summary_right),
+    pn.Row(
+        summary_left, 
+        summary_right,
+        pn.pane.Markdown(
+            "The Poisson regression models above show a significant relationship between clonal and sub-clonal counts. "
+            "Even though the data is overdispersed, the **pseudo-R-squared** values are misleadingly high, **WHY**?",
+            styles=comment_style,
+            width=300 # Adjust width to fit text
+            ),
+        ),
     pn.pane.Markdown("## Poisson Regression Hexplots Comparison", styles=header_style),
     pn.Row(hex_fig_left, hex_fig_right),
     pn.pane.Markdown("## Negative Binomial Regression Model Summaries", styles=header_style),
