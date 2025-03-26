@@ -1,3 +1,5 @@
+# Binomial Test
+
 For a binomially distributed random variable $X \sim \text{Bin}(n, p_0)$, we use:
 
 $$
@@ -23,3 +25,14 @@ $$
 2 \times \min(P(X \leq k), P(X \geq k))
 $$
 
+# Negative Binomial Distribution
+
+The idea is to have a distribution for a random variable that counts the number of failure $k$ before a certain number of success $r$
+
+$$
+{\displaystyle f(k;r,p)\equiv \Pr(X=k)={\binom {k+r-1}{k}}(1-p)^{k}p^{r}}
+$$
+
+$$\begin{array}{c} {\displaystyle {\begin{aligned}{\text{Mean:}}\quad &\lambda ={\frac {(1-p)r}{p}}\quad \Rightarrow \quad p={\frac {r}{r+\lambda }},\\{\text{Variance:}}\quad &\lambda \left(1+{\frac {\lambda }{r}}\right)>\lambda ,\quad {\text{thus always overdispersed}}.\end{aligned}}} \end{array}$$
+
+$${\displaystyle \operatorname {Poisson} (\lambda )=\lim _{r\to \infty }\operatorname {NB} \left(r,{\frac {r}{r+\lambda }}\right).}$$

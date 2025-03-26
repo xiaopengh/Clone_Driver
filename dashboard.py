@@ -222,7 +222,7 @@ dashboard = pn.Column(
         summary_right,
         pn.pane.Markdown(
             "The Poisson regression models above show a significant relationship between clonal and sub-clonal counts. "
-            "Even though the data is overdispersed, the **pseudo-R-squared** values are misleadingly high, **WHY**?",
+            "Even though the data is overdispersed, the **Pseudo-R-square** values are misleadingly high, **WHY**?",
             styles=comment_style,
             width=300 # Adjust width to fit text
             ),
@@ -230,7 +230,17 @@ dashboard = pn.Column(
     pn.pane.Markdown("## Poisson Regression Hexplots Comparison", styles=header_style),
     pn.Row(hex_fig_left, hex_fig_right),
     pn.pane.Markdown("## Negative Binomial Regression Model Summaries", styles=header_style),
-    pn.Row(summary_left_negbin, summary_right_negbin),
+    pn.Row(
+        summary_left_negbin, 
+        summary_right_negbin,
+        pn.pane.Markdown(
+            "The Negative Binomial regression models above show a significant relationship between clonal and sub-clonal counts. "
+            "The **likelihood ratio test** shows that the Negative Binomial model is a good fit for the data."
+            "Not sure if it's justifiable to compare the likelihood values between Poisson and Negative Binomial models, but the Negative Binomial model has indead a likelihood value closer to 1.",
+            styles=comment_style,
+            width=300 # Adjust width to fit text
+            ),
+        ),
     pn.pane.Markdown("## Negative Binomial Regression Hexplots Comparison", styles=header_style),
     pn.Row(hex_fig_left_negbin, hex_fig_right_negbin),
     sizing_mode='stretch_width'
