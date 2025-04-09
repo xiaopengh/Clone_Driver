@@ -1,0 +1,1 @@
+Both datasets show evidence of **overdispersion** (variance >> mean). This justifies using models like **Poisson** and **Negative Binomial** that handle count data.

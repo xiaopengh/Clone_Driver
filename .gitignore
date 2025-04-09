@@ -3,3 +3,7 @@ venv/
 
 # ignore mc3 data files
 data/
+
+# ignore cache files
+__pycache__/
+.Rproj.user

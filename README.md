@@ -10,7 +10,7 @@ For a one-sided test with alternative "smaller" i.e $H_1: p < p_0$, the p-value 
 
 $$
  P(X \leq k-1 \mid p_0) = 
- \text{inf} \{ P(X \leq k \mid p)  \mid p > p_0 \}
+ \text{inf} \{ P(X \leq k-1 \mid p)  \mid p > p_0 \}
 $$
 
 For a one-sided test with alternative "larger" i.e $H_1: p > p_0$, the p-value is:

@@ -1,0 +1,1 @@
+The bar plots show counts of clonal and sub-clonal mutations. The Binomial test dataset has relatively more clonal mutations, while the Z Test dataset has more sub-clonal, likely due to different test assumptions ($H_0$).
