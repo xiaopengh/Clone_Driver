@@ -21,7 +21,11 @@ def fit_poisson_model(summary):
         sorted_predictions = predictions.iloc[sorted_indices]
         
         pred_df = pd.DataFrame({'Clonal Count': sorted_x, 'Predicted Sub-Clonal Count': sorted_predictions})
-        return model.summary().as_text(), pred_df
+
+        summary_text = model.summary().as_text()
+
+        return summary_text, pred_df
+    
     except Exception as e:
         return f"Error fitting Poisson model: {e}", None
 
@@ -36,11 +40,15 @@ def fit_negbin_model(summary):
         y = summary["Sub-Clonal Count"]
         x_const = sm.add_constant(x)
         model = sm.NegativeBinomial(y, x_const).fit(disp=False)
-        predictions = model.predict(x_const)
+
+        # Predict for x < 1200
+        x_pred = x[x<1200]
+        pred_x_const = sm.add_constant(x_pred)
+        predictions = model.predict(pred_x_const)
 
         # Sort predictions based on x for a smooth line plot
-        sorted_indices = x.argsort()
-        sorted_x = x.iloc[sorted_indices]
+        sorted_indices = x_pred.argsort()
+        sorted_x = x_pred.iloc[sorted_indices]
         sorted_predictions = predictions.iloc[sorted_indices]
 
         pred_df = pd.DataFrame({'Clonal Count': sorted_x, 'Predicted Sub-Clonal Count': sorted_predictions})
@@ -50,6 +58,7 @@ def fit_negbin_model(summary):
         summary_text = model.summary().as_text()
         summary_text += f"\n\nEstimated alpha (dispersion parameter): {alpha_est:.4f}"
 
-        return summary_text, pred_df
+        return summary_text, pred_df, alpha_est
+    
     except Exception as e:
-        return f"Error fitting Negative Binomial model: {e}", None 
+        return f"Error fitting Negative Binomial model: {e}", None, None

@@ -1,11 +1,6 @@
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-
-BiocManager::install("GenomicRanges")
-BiocManager::install("rtracklayer") # For reading GTF files
-
 library(GenomicRanges)
 library(rtracklayer)
+library(maftools)
 
 # 1. Read the BED file of sequenced regions
 exome_regions <- import("../data/gencode.v19.basic.exome.bed")
@@ -13,35 +8,59 @@ exome_regions <- import("../data/gencode.v19.basic.exome.bed")
 # 2. Read the GTF file of gene annotations
 gene_annotations <- import("../data/gencode.v19.annotation.gtf")
 
+# 3. Read the MAF file for mutated genes 
+maf <- read.maf(maf = "../data/mc3.maf")
+
 # Filter for only gene features
 genes <- gene_annotations[gene_annotations$type == "gene"]
 
-summary(genes)
+# Get mutated genes for maf file
+mutated_gene_names <- getGeneSummary(maf)$Hugo_Symbol %>% unique()
+mutated_gene_names
+
+length(exome_regions)
+length(gene_annotations)
 length(genes)
-names(mcols(genes)) # Use mcols() to access metadata columns
-seqinfo(genes)
-str(genes)
+length(gene_annotations) - length(genes)
 
-# 3. Perform the intersection
-overlapping_genes <- intersect(genes, exome_regions)
+# Define new UCSC-style sequence levels
+old <- seqlevels(exome_regions)
+new <- sub("^MT$", "chrM", sub("^([0-9]+|X|Y)$", "chr\\1", old))
 
-# 'overlapping_genes' is now a GRanges object containing the regions of genes
-# that overlap with the exome regions.
+# Apply the renaming
+names(new) <- old  # mapping from old to new
+exome_regions <- renameSeqlevels(exome_regions, new)
 
-# 4. Extract the gene names (assuming the GTF has a 'gene_name' attribute)
-overlapping_gene_names <- unique(overlapping_genes$gene_name)
+# Sequence levels
+exome_seqlevels <- seqlevels(exome_regions)
+gene_seqlevels <- seqlevels(gene_annotations)
 
-# Print the number of overlapping genes
-cat("Number of genes overlapping with exome regions:", length(overlapping_gene_names), "\n")
+# Find sequence levels in exome_regions but not in gene_annotations
+setdiff(exome_seqlevels, gene_seqlevels)
 
-# Get the genes that fall INSIDE the exome regions (i.e., completely contained),
-overlaps_within <- findOverlaps(genes, exome_regions, type = "within")
-genes_within_exome <- genes[queryHits(overlaps_within)]
-unique_genes_within <- unique(genes_within_exome$gene_name)
-cat("Number of genes completely within exome regions:", length(unique_genes_within), "\n")
+# Find sequence levels in gene_annotations but not in exome_regions
+setdiff(gene_seqlevels, exome_seqlevels)
 
-# Get the genes that have ANY overlap (as intersect):
-overlaps_any <- findOverlaps(genes, exome_regions)
-overlapping_genes_any <- genes[queryHits(overlaps_any)]
-unique_overlapping_genes_any_names <- unique(overlapping_genes_any$gene_name)
-cat("Number of genes with any overlap with exome regions (using findOverlaps):", length(unique_overlapping_genes_any_names), "\n")
+# Find the common sequence levels
+intersect(exome_seqlevels, gene_seqlevels)
+
+# Find overlaps keyword any
+hits <- findOverlaps(gene_annotations, exome_regions)
+hits
+
+# Do we need pintersect the hits? 
+sequenced_genes <- gene_annotations[queryHits(hits)] %>% unique() # Keeping only one individual
+gene_names <- mcols(sequenced_genes)$gene_name  # or "gene_id" depending on the GTF
+
+# Genes that were sequenced but not mutated
+zero_mutation_genes <- sequenced_genes[!(gene_names %in% mutated_gene_names)]
+zero_mutation_gene_names <- mcols(zero_mutation_genes)$gene_name %>% unique()
+zero_mutation_gene_names
+
+# Save a csv file for this
+# Convert to data frame with one column named "gene_name"
+df <- data.frame(hugo_symbol = zero_mutation_gene_names)
+
+# Write to CSV (no row names)
+write.csv(df, file = "../data/zero_mutation_genes.csv", row.names = FALSE)
+

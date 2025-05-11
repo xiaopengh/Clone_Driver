@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import pickle as pkl
 import numpy as np
+from scipy.stats import nbinom
 
 @st.cache_data
 def load_and_process_data():
@@ -68,3 +69,24 @@ def add_overlap_counts(summary):
     overlap_counts = summary.groupby(['Clonal Count', 'Sub-Clonal Count']).size().reset_index(name='Overlap Count')
     overlap_counts['Log Overlap Count'] = np.log(overlap_counts['Overlap Count'])
     return overlap_counts 
+
+@st.cache_data
+def negbin_quantiles(Y_pred: pd.Series, scale: float ,q_range=0.95):
+    """
+    Compute (1 - alpha)% quantile interval of a negative binomial 
+    given predicted means (mu) and dispersion alpha.
+
+    Parameters:
+    - Y_pred: pd.Series of predicted means (μ values)
+    - scale: dispersion parameter (α), where Var(Y) = μ + αμ²
+    - alpha: float, defines the range for quantiles (default is 0.05 for 95% CI)
+
+    Returns:
+    - pd.DataFrame with lower and upper quantiles
+    """
+    theta = 1 / scale  # Dispersion parameter for Negative Binomial
+    alpha = 1 - q_range  # Convert to alpha for quantiles
+    p = theta / (theta + Y_pred)
+    lower = nbinom.ppf(alpha / 2, theta, p)
+    upper = nbinom.ppf(1 - alpha / 2, theta, p)
+    return lower, upper

@@ -1,6 +1,6 @@
 import streamlit as st
 from src.config import CONTENT
-from src.data_handlers import load_and_process_data, calculate_summary_stats, add_overlap_counts
+from src.data_handlers import load_and_process_data, calculate_summary_stats
 from src.models import fit_poisson_model, fit_negbin_model
 from src.visualizations import plot_scatter, plot_clonality_counts
 
@@ -26,8 +26,8 @@ if data_binom_raw is not None and data_ztest_raw is not None and summary_binom i
     # Fit models using the gene summaries
     poisson_summary_binom_text, poisson_pred_binom = fit_poisson_model(summary_binom)
     poisson_summary_ztest_text, poisson_pred_ztest = fit_poisson_model(summary_ztest)
-    negbin_summary_binom, negbin_pred_binom = fit_negbin_model(summary_binom)
-    negbin_summary_ztest, negbin_pred_ztest = fit_negbin_model(summary_ztest)
+    negbin_summary_binom, negbin_pred_binom, scale_binom = fit_negbin_model(summary_binom)
+    negbin_summary_ztest, negbin_pred_ztest, scale_ztest = fit_negbin_model(summary_ztest)
 
     # --- Dashboard Layout ---
 
@@ -78,13 +78,11 @@ if data_binom_raw is not None and data_ztest_raw is not None and summary_binom i
     col1, col2 = st.columns(2)
     with col1:
         st.subheader(CONTENT['headers']['left_poisson_plot'])
-        summary_binom_plot_data = add_overlap_counts(summary_binom)
-        fig_poisson_binom = plot_scatter(summary_binom, summary_binom_plot_data, poisson_pred_binom)
+        fig_poisson_binom = plot_scatter(summary_binom, poisson_pred_binom)
         st.plotly_chart(fig_poisson_binom, use_container_width=True)
     with col2:
         st.subheader(CONTENT['headers']['right_poisson_plot'])
-        summary_ztest_plot_data = add_overlap_counts(summary_ztest)
-        fig_poisson_ztest = plot_scatter(summary_ztest, summary_ztest_plot_data, poisson_pred_ztest)
+        fig_poisson_ztest = plot_scatter(summary_ztest, poisson_pred_ztest)
         st.plotly_chart(fig_poisson_ztest, use_container_width=True)
 
     # Section 6: Negative Binomial Regression
@@ -102,11 +100,11 @@ if data_binom_raw is not None and data_ztest_raw is not None and summary_binom i
     col1, col2 = st.columns(2)
     with col1:
         st.subheader(CONTENT['headers']['left_negbin_plot'])
-        fig_negbin_binom = plot_scatter(summary_binom, summary_binom_plot_data, negbin_pred_binom)
+        fig_negbin_binom = plot_scatter(summary_binom, negbin_pred_binom, scale_binom)
         st.plotly_chart(fig_negbin_binom, use_container_width=True)
     with col2:
         st.subheader(CONTENT['headers']['right_negbin_plot'])
-        fig_negbin_ztest = plot_scatter(summary_ztest, summary_ztest_plot_data, negbin_pred_ztest)
+        fig_negbin_ztest = plot_scatter(summary_ztest, negbin_pred_ztest, scale_ztest)
         st.plotly_chart(fig_negbin_ztest, use_container_width=True)
 
     # --- Optional: Display Raw Loaded Data ---

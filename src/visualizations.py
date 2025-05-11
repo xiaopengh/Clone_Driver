@@ -2,30 +2,35 @@ import plotly.express as px
 import plotly.graph_objects as go
 import statsmodels.api as sm
 import pandas as pd
+from src.data_handlers import add_overlap_counts, negbin_quantiles
 
-def plot_scatter(summary_df, overlap_df, pred_df, plot_title=None):
+def plot_scatter(summary_df, pred_df, scale=None, plot_title=None):
     """
     Plots a scatter plot of Sub-Clonal vs Clonal Counts with overlap coloring,
     OLS trendline, and Poisson prediction line.
     """
+    # Add overlap counts to the summary dataframe
+    plot_df = add_overlap_counts(summary_df)
+
+    # Create a new column for the log of the overlap count
     fig = go.Figure()
 
     # Add the scatter points
     scatter = go.Scatter(
-        x=overlap_df['Clonal Count'],
-        y=overlap_df['Sub-Clonal Count'],
+        x=plot_df['Clonal Count'],
+        y=plot_df['Sub-Clonal Count'],
         mode='markers',
         marker=dict(
             size=3,
-            color=overlap_df['Log Overlap Count'],
+            color=plot_df['Log Overlap Count'],
             colorscale='Viridis',
-            colorbar=dict(title='Log Overlap Count'),
+            colorbar=dict(title='Overlap Count'),
             showscale=True,
             symbol='square'
         ),
         name='Gene',
         text=[f"Clonal: {c}, Sub-Clonal: {s}, Overlap: {o}" for c, s, o in zip(
-            overlap_df['Clonal Count'], overlap_df['Sub-Clonal Count'], overlap_df['Overlap Count']
+            plot_df['Clonal Count'], plot_df['Sub-Clonal Count'], plot_df['Overlap Count']
         )],
         hoverinfo='text'
     )
@@ -58,10 +63,23 @@ def plot_scatter(summary_df, overlap_df, pred_df, plot_title=None):
             line=dict(color='green', dash='dash', width=3)
         ))
 
+    if scale:
+        lower, upper = negbin_quantiles(pred_df['Predicted Sub-Clonal Count'], scale)
+        fig.add_trace(go.Scatter(
+            x=list(pred_df['Clonal Count']) + list(pred_df['Clonal Count'])[::-1],
+            y=list(lower) + list(upper)[::-1],
+            fill='toself',
+            fillcolor='rgba(0,100,80,0.2)',
+            line=dict(color='rgba(255,255,255,0)'),
+            hoverinfo='skip',
+            showlegend=True,
+            name='Quantile Range'
+        ))
+    
     # Update layout
     fig.update_layout(
-        xaxis=dict(range=[0, 300]),
-        yaxis=dict(range=[0, 100]),
+        xaxis=dict(range=[0, 1200]),
+        yaxis=dict(range=[0, 400]),
         legend=dict(
             orientation="h",
             yanchor="bottom",
