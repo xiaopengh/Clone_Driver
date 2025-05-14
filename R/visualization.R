@@ -89,8 +89,8 @@ summary_stats
 top_chromosomes <- names(sort(table(seqnames(genes)), decreasing = TRUE))
 genes_subset <- genes[seqnames(genes) %in% top_chromosomes]
 
-coverage_plot <- ggplot(as.data.frame(genes_subset), 
-                       aes(x = start, y = seqnames, color = strand)) +
+coverage_plot <- ggplot(as.data.frame(genes_subset),
+                        aes(x = start, y = seqnames, color = strand)) +
   geom_segment(aes(xend = end, yend = seqnames), linewidth = 5) +
   theme_minimal() +
   labs(title = "Gene Coverage on Human Chromosomes",

@@ -1,6 +1,6 @@
 import streamlit as st
 from src.config import CONTENT
-from src.data_handlers import load_and_process_data, calculate_summary_stats
+from src.data_handlers import load_and_process_data, extend_clonal_summary, calculate_summary_stats
 from src.models import fit_poisson_model, fit_negbin_model
 from src.visualizations import plot_scatter, plot_clonality_counts
 
@@ -16,6 +16,8 @@ if st.sidebar.button("Clear Cache and Rerun"):
 
 # --- Data Loading and Processing ---
 data_binom_raw, data_ztest_raw, summary_binom, summary_ztest = load_and_process_data()
+# summary_binom_extended = extend_clonal_summary(summary_binom)
+# summary_ztest_extended = extend_clonal_summary(summary_ztest)
 
 # Proceed only if data loading was successful
 if data_binom_raw is not None and data_ztest_raw is not None and summary_binom is not None and summary_ztest is not None:
@@ -113,5 +115,4 @@ if data_binom_raw is not None and data_ztest_raw is not None and summary_binom i
     with st.expander("Show Raw Loaded Data (Z-Test)"):
         st.dataframe(data_ztest_raw)
 
-# --- How to Run ---
 st.sidebar.markdown("---")

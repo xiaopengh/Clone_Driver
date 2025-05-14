@@ -10,9 +10,11 @@ def load_and_process_data():
     try:
         # Load
         data_binom = pkl.load(open("data/mc3_binom_left.pkl", "rb")).reset_index(drop=True)
+        data_binom = data_binom.reset_index(drop=True)
         data_binom["Clonality"] = data_binom["Clonality"].astype(str)
 
         data_ztest = pkl.load(open("data/mc3_Ztest_left.pkl", "rb")).reset_index(drop=True)
+        data_ztest = data_ztest.reset_index(drop=True)
         data_ztest["Clonality"] = data_ztest["Clonality"].astype(str)
 
         # Process (Group by Gene)
@@ -37,6 +39,38 @@ def load_and_process_data():
     except Exception as e:
         st.error(f"An error occurred during data loading or processing: {e}")
         return None, None, None, None
+
+def extend_clonal_summary(clonal_summary):
+    """
+    This function extends the clonal summary DataFrame by adding rows for genes with zero mutations.
+    It uses a list of HUGO symbols from a CSV file to ensure that all genes are represented.
+
+    The function assume that the data has already gone through the following steps:
+    # Load the data from a pickle file
+    data = pd.read_pickle("path/to/your/data.pkl")
+    data["Clonality"] = data["Clonality"].astype(str)
+
+    # Group by Hugo_Symbol and count occurrences of Clonality
+    clonal_summary = data.groupby("Hugo_Symbol")["Clonality"].value_counts().unstack(fill_value=0)
+
+    # Rename columns for clarity
+    clonal_summary.columns.name = None  # Remove column index name
+    clonal_summary = clonal_summary.rename(columns={"Clonal": "Clonal Count", "Sub-Clonal": "Sub-Clonal Count"})
+    """
+    hugo_symbols = pd.read_csv("data/zero_mutation_genes.csv")
+    hugo_list = hugo_symbols['hugo_symbol'].str.strip().tolist()
+
+    df = pd.DataFrame(
+        0,
+        index=hugo_list,
+        columns=clonal_summary.columns
+    )
+
+    clonal_summary = pd.concat([clonal_summary, df])
+
+    clonal_summary = clonal_summary.sort_index()
+
+    return clonal_summary
 
 @st.cache_data
 def calculate_summary_stats(clonal_summary):
