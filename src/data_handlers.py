@@ -10,12 +10,12 @@ def load_and_process_data():
     try:
         # Load
         data_binom = pkl.load(open("data/mc3_binom_left.pkl", "rb")).reset_index(drop=True)
-        data_binom = data_binom.reset_index(drop=True)
-        data_binom["Clonality"] = data_binom["Clonality"].astype(str)
+        # data_binom = data_binom.reset_index(drop=True)
+        # data_binom["Clonality"] = data_binom["Clonality"].astype(str)
 
         data_ztest = pkl.load(open("data/mc3_Ztest_left.pkl", "rb")).reset_index(drop=True)
-        data_ztest = data_ztest.reset_index(drop=True)
-        data_ztest["Clonality"] = data_ztest["Clonality"].astype(str)
+        # data_ztest = data_ztest.reset_index(drop=True)
+        # data_ztest["Clonality"] = data_ztest["Clonality"].astype(str)
 
         # Process (Group by Gene)
         summary_binom = data_binom.groupby("Hugo_Symbol")["Clonality"].value_counts().unstack(fill_value=0)
@@ -60,15 +60,14 @@ def extend_clonal_summary(clonal_summary):
     hugo_symbols = pd.read_csv("data/zero_mutation_genes.csv")
     hugo_list = hugo_symbols['hugo_symbol'].str.strip().tolist()
 
-    df = pd.DataFrame(
-        0,
-        index=hugo_list,
-        columns=clonal_summary.columns
-    )
+    df = pd.DataFrame({
+        'Hugo_Symbol': hugo_list,
+        'Clonal Count': [0] * len(hugo_list),
+        'Sub-Clonal Count': [0] * len(hugo_list)
+    })
 
-    clonal_summary = pd.concat([clonal_summary, df])
-
-    clonal_summary = clonal_summary.sort_index()
+    # Concatenate and reset index
+    clonal_summary = pd.concat([clonal_summary, df], ignore_index=True)
 
     return clonal_summary
 

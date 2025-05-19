@@ -1,6 +1,7 @@
 library(GenomicRanges)
 library(rtracklayer)
 library(maftools)
+# library()
 library(dplyr)
 
 # ==============================================================================
@@ -27,6 +28,7 @@ barplot(tab_gene_type,
 
 # Extract only individuals with type "gene"
 genes <- gene_annotations[gene_annotations$type == "gene"]
+# also filter by gene_type == "protein_coding" & level %in% c('1', '2')
 
 # 3. Read the MAF file for mutated genes
 maf <- read.maf(maf = "../data/mc3.maf")
@@ -36,6 +38,7 @@ maf <- read.maf(maf = "../data/mc3.maf")
 # Get mutated genes for maf file
 mutated_gene_names <- getGeneSummary(maf)$Hugo_Symbol
 mutated_gene_names
+
 rm(maf)
 
 # Define new UCSC-style sequence levels
@@ -46,15 +49,14 @@ new <- sub("^MT$", "chrM", sub("^([0-9]+|X|Y)$", "chr\\1", old))
 # Apply the renaming
 names(new) <- old  # mapping from old to new
 exome_regions <- renameSeqlevels(exome_regions, new)
-# Sequence levels
+
+# Sequence levels verification
 exome_seqlevels <- seqlevels(exome_regions)
 gene_seqlevels <- seqlevels(gene_annotations)
-# Find sequence levels in exome_regions but not in gene_annotations
-setdiff(exome_seqlevels, gene_seqlevels)
-# Find sequence levels in gene_annotations but not in exome_regions
-setdiff(gene_seqlevels, exome_seqlevels)
-# Find the common sequence levels
-intersect(exome_seqlevels, gene_seqlevels)
+setdiff(exome_seqlevels, gene_seqlevels) # expected 0
+setdiff(gene_seqlevels, exome_seqlevels) # expected 0
+intersect(exome_seqlevels, gene_seqlevels) # expected chr1 ... chrY
+rm(exome_seqlevels, gene_seqlevels)
 
 # ==============================================================================
 # This extract hugo symbols for all feature types(gene, exon, etc) in gtf file 
@@ -99,6 +101,7 @@ length(gene_names)
 
 # Get the gene_names that doesn't appear in maf file 
 zero_mutation_gene_names <- gene_names[!(gene_names %in% mutated_gene_names)]
+length(zero_mutation_gene_names)
 
 # Save a csv file for this
 # Convert to data frame with one column named "hugo_symbol"

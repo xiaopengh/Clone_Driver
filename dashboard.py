@@ -4,23 +4,14 @@ from src.data_handlers import load_and_process_data, extend_clonal_summary, calc
 from src.models import fit_poisson_model, fit_negbin_model
 from src.visualizations import plot_scatter, plot_clonality_counts
 
-# --- Main App Logic ---
-st.set_page_config(layout="wide")
-st.title(CONTENT['title'])
-
-# --- Sidebar for Controls ---
-st.sidebar.header("Controls")
-if st.sidebar.button("Clear Cache and Rerun"):
-    st.cache_data.clear()
-    st.rerun()
-
-# --- Data Loading and Processing ---
-data_binom_raw, data_ztest_raw, summary_binom, summary_ztest = load_and_process_data()
-# summary_binom_extended = extend_clonal_summary(summary_binom)
-# summary_ztest_extended = extend_clonal_summary(summary_ztest)
-
-# Proceed only if data loading was successful
-if data_binom_raw is not None and data_ztest_raw is not None and summary_binom is not None and summary_ztest is not None:
+def summary_visualization(summary_binom, summary_ztest, suffix=''):
+    """
+    Display summary visualizations with unique keys for Plotly charts
+    Args:
+        summary_binom: DataFrame for binomial data
+        summary_ztest: DataFrame for z-test data
+        suffix: String to make chart keys unique
+    """
     # Calculate stats using the gene summaries
     stats_binom = calculate_summary_stats(summary_binom)
     stats_ztest = calculate_summary_stats(summary_ztest)
@@ -60,10 +51,10 @@ if data_binom_raw is not None and data_ztest_raw is not None and summary_binom i
     col1, col2 = st.columns([1, 1])
     with col1:
         fig_bar_binom = plot_clonality_counts(data_binom_raw, "Binomial Test Total Clonality Counts")
-        st.plotly_chart(fig_bar_binom, use_container_width=True)
+        st.plotly_chart(fig_bar_binom, use_container_width=True, key=f"bar_binom{suffix}")
     with col2:
         fig_bar_ztest = plot_clonality_counts(data_ztest_raw, "Z-Test Total Clonality Counts")
-        st.plotly_chart(fig_bar_ztest, use_container_width=True)
+        st.plotly_chart(fig_bar_ztest, use_container_width=True, key=f"bar_ztest{suffix}")
 
     # Section 4: Poisson Regression
     st.header(CONTENT['headers']['poisson_summary'])
@@ -81,11 +72,11 @@ if data_binom_raw is not None and data_ztest_raw is not None and summary_binom i
     with col1:
         st.subheader(CONTENT['headers']['left_poisson_plot'])
         fig_poisson_binom = plot_scatter(summary_binom, poisson_pred_binom)
-        st.plotly_chart(fig_poisson_binom, use_container_width=True)
+        st.plotly_chart(fig_poisson_binom, use_container_width=True, key=f"poisson_binom{suffix}")
     with col2:
         st.subheader(CONTENT['headers']['right_poisson_plot'])
         fig_poisson_ztest = plot_scatter(summary_ztest, poisson_pred_ztest)
-        st.plotly_chart(fig_poisson_ztest, use_container_width=True)
+        st.plotly_chart(fig_poisson_ztest, use_container_width=True, key=f"poisson_ztest{suffix}")
 
     # Section 6: Negative Binomial Regression
     st.header(CONTENT['headers']['negbin_summary'])
@@ -103,16 +94,40 @@ if data_binom_raw is not None and data_ztest_raw is not None and summary_binom i
     with col1:
         st.subheader(CONTENT['headers']['left_negbin_plot'])
         fig_negbin_binom = plot_scatter(summary_binom, negbin_pred_binom, scale_binom)
-        st.plotly_chart(fig_negbin_binom, use_container_width=True)
+        st.plotly_chart(fig_negbin_binom, use_container_width=True, key=f"negbin_binom{suffix}")
     with col2:
         st.subheader(CONTENT['headers']['right_negbin_plot'])
         fig_negbin_ztest = plot_scatter(summary_ztest, negbin_pred_ztest, scale_ztest)
-        st.plotly_chart(fig_negbin_ztest, use_container_width=True)
+        st.plotly_chart(fig_negbin_ztest, use_container_width=True, key=f"negbin_ztest{suffix}")
 
-    # --- Optional: Display Raw Loaded Data ---
-    with st.expander("Show Raw Loaded Data (Binomial)"):
-        st.dataframe(data_binom_raw)
-    with st.expander("Show Raw Loaded Data (Z-Test)"):
-        st.dataframe(data_ztest_raw)
+# --- Main App Logic ---
+st.set_page_config(layout="wide")
+st.title(CONTENT['title'])
+
+# --- Sidebar for Controls ---
+st.sidebar.header("Controls")
+if st.sidebar.button("Clear Cache and Rerun"):
+    st.cache_data.clear()
+    st.rerun()
+
+# --- Data Loading and Processing ---
+data_binom_raw, data_ztest_raw, summary_binom, summary_ztest = load_and_process_data()
+summary_binom_extended = extend_clonal_summary(summary_binom)
+summary_ztest_extended = extend_clonal_summary(summary_ztest)
+
+# Proceed only if data loading was successful
+if data_binom_raw is not None and data_ztest_raw is not None and summary_binom is not None and summary_ztest is not None:
+    
+    st.header("This doesn't include genes with zero mutations")
+    summary_visualization(summary_binom, summary_ztest)
+
+    st.header("This includes data with 0 clonal count and 0 subclonal count")
+    summary_visualization(summary_binom_extended, summary_ztest_extended, "_extended")
+
+    # # --- Optional: Display Raw Loaded Data ---
+    # with st.expander("Show Raw Loaded Data (Binomial)"):
+    #     st.dataframe(data_binom_raw)
+    # with st.expander("Show Raw Loaded Data (Z-Test)"):
+    #     st.dataframe(data_ztest_raw)
 
 st.sidebar.markdown("---")
