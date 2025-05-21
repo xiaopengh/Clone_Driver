@@ -54,7 +54,7 @@ def fit_negbin_model(summary):
         pred_df = pd.DataFrame({'Clonal Count': sorted_x, 'Predicted Sub-Clonal Count': sorted_predictions})
 
         # Extract estimated alpha
-        alpha_est = model.params_alpha if hasattr(model, "params_alpha") else model.scale
+        alpha_est = model.params['alpha']
         summary_text = model.summary().as_text()
         summary_text += f"\n\nEstimated alpha (dispersion parameter): {alpha_est:.4f}"
 

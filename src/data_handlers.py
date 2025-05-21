@@ -111,7 +111,7 @@ def negbin_quantiles(Y_pred: pd.Series, scale: float ,q_range=0.95):
 
     Parameters:
     - Y_pred: pd.Series of predicted means (μ values)
-    - scale: dispersion parameter (α), where Var(Y) = μ + αμ²
+    - scale: dispersion parameter (1/theta), where Var(Y) = μ + μ²/theta
     - alpha: float, defines the range for quantiles (default is 0.05 for 95% CI)
 
     Returns:
