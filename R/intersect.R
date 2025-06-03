@@ -5,7 +5,7 @@ library(data.table)
 library(dplyr)
 
 # ==============================================================================
-# Prepare working data  
+# Prepare working data
 # ==============================================================================
 
 # 1. Read the BED file of sequenced regions
@@ -30,9 +30,9 @@ genes <- gene_annotations[gene_annotations$type == "gene"]
 
 # Barplot of 'gene_type' categories
 tab <- table(genes$gene_type)
-barplot(tab, col="lightgreen", las=2)
+barplot(tab, col = "lightgreen", las = 2)
 
-# Extract only individuals with type "gene" 
+# Extract only individuals with type "gene"
 # also filter by gene_type == "protein_coding" & level %in% c('1', '2')
 protein_genes <- genes[genes$gene_type == "protein_coding" & genes$level %in% c('1', '2')]
 

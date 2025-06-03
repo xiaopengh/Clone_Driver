@@ -10,6 +10,8 @@ library(GenomeInfoDb)
 library(RColorBrewer)
 library(viridis)
 
+getwd()
+
 # 1. Read the BED file of sequenced regions
 exome_regions <- import("../data/gencode.v19.basic.exome.bed")
 
@@ -123,17 +125,17 @@ scientific_plot <- ggplot(chr_density) +
   geom_violin(aes(x = as.factor(chromosome), y = position),
               fill = "lightblue", alpha = 0.6) +
   facet_grid(. ~ "A: Gene Density Distribution") +
-  
+
   # Panel B: Gene type distribution
   geom_bar(aes(x = as.factor(chromosome), fill = gene_type),
            position = "fill") +
   facet_grid(. ~ "B: Gene Type Composition") +
-  
+
   # Panel C: Strand bias
   geom_bar(aes(x = as.factor(chromosome), fill = strand),
            position = "fill") +
   facet_grid(. ~ "C: Strand Distribution") +
-  
+
   # Common theme elements
   theme_minimal() +
   theme(
@@ -162,7 +164,7 @@ gene_stats <- chr_density %>%
   )
 
 stats_plot <- ggplot(gene_stats) +
-  geom_point(aes(x = gene_count, y = type_diversity, 
+  geom_point(aes(x = gene_count, y = type_diversity,
                  size = strand_ratio, color = chromosome)) +
   scale_size_continuous(range = c(3, 10)) +
   theme_minimal() +
