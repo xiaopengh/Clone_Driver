@@ -2,7 +2,6 @@ library(rtracklayer)
 library(Biostrings)
 library(dplyr)
 library(stringr)
-# library(progress)
 library(GenomicFeatures) # For TxDb and related functions
 
 # --- 1. Define File Paths and Parameters ---
@@ -35,16 +34,16 @@ message("TxDb created.")
 # Get 5' UTRs and CDS regions by transcript from TxDb
 message("Extracting 5'UTR and CDS information from TxDb...")
 five_utr_by_tx <- tryCatch({
-    fiveUTRsByTranscript(txdb, use.names=TRUE) # GRangesList
+  fiveUTRsByTranscript(txdb, use.names=TRUE) # GRangesList
 }, error = function(e) {
-    message("Warning: Could not extract 5'UTRs by transcript. Assuming no 5'UTRs. Error: ", e$message)
-    GRangesList() # Return empty GRangesList to allow script to proceed, but CDS extraction might be affected
+  message("Warning: Could not extract 5'UTRs by transcript. Assuming no 5'UTRs. Error: ", e$message)
+  GRangesList() # Return empty GRangesList to allow script to proceed, but CDS extraction might be affected
 })
 
 cds_grlist_by_tx <- tryCatch({
-    cdsBy(txdb, by="tx", use.names=TRUE) # GRangesList of CDS genomic coordinates
+  cdsBy(txdb, by="tx", use.names=TRUE) # GRangesList of CDS genomic coordinates
 }, error = function(e) {
-    stop("Error extracting CDS by transcript from TxDb: ", e$message)
+  stop("Error extracting CDS by transcript from TxDb: ", e$message)
 })
 message("5'UTR and CDS information extracted.")
 
@@ -55,9 +54,9 @@ cds_features_gtf <- gtf_data_raw[gtf_data_raw$type == "CDS"]
 if (!"transcript_id" %in% names(mcols(cds_features_gtf))) {
   # Attempt to find transcript_id in other potential attribute columns if GTF is non-standard
   if ("transcript" %in% names(mcols(cds_features_gtf))) {
-      cds_features_gtf$transcript_id <- cds_features_gtf$transcript
+    cds_features_gtf$transcript_id <- cds_features_gtf$transcript
   } else {
-      stop("GTF metadata (from direct import) does not contain 'transcript_id' or 'transcript' column.")
+    stop("GTF metadata (from direct import) does not contain 'transcript_id' or 'transcript' column.")
   }
 }
 cds_features_gtf <- cds_features_gtf[!is.na(cds_features_gtf$transcript_id)]
@@ -87,23 +86,33 @@ message("FASTA sequence names cleaned.")
 # Using chromosomes present in the CDS features from the raw GTF import
 chromosomes <- unique(as.character(seqnames(cds_features_gtf)))
 if (length(chromosomes) == 0) {
-    stop("No chromosomes found with CDS features in the GTF file. Cannot proceed.")
+  stop("No chromosomes found with CDS features in the GTF file. Cannot proceed.")
 }
 message(paste("Chromosomes to process (based on GTF CDS features):", paste(chromosomes, collapse=", ")))
 
-# --- 4. Main Processing Loop ---
+# ==============================================================================
+
+# --- 1. Get Chromosome List ---
+# Using chromosomes present in the CDS features from the raw GTF import
+chromosomes <- unique(as.character(seqnames(cds_features_gtf)))
+if (length(chromosomes) == 0) {
+  stop("No chromosomes found with CDS features in the GTF file. Cannot proceed.")
+}
+message(paste("Chromosomes to process (based on GTF CDS features):", paste(chromosomes, collapse=", ")))
+
+# --- 2. Main Processing Loop ---
 all_mutation_results <- list()
 
 for (chr_name in chromosomes) {
   message(paste("\nProcessing chromosome:", chr_name))
-
+  
   # Filter CDS features from raw GTF for the current chromosome to get transcript list
   cds_on_chr_gtf <- cds_features_gtf[seqnames(cds_features_gtf) == chr_name]
   if (length(cds_on_chr_gtf) == 0) {
     message(paste("No CDS features found in raw GTF on chromosome", chr_name, ". Skipping."))
     next
   }
-
+  
   # Get unique transcript IDs on this chromosome that have CDS features in the GTF
   transcripts_on_chr <- unique(cds_on_chr_gtf$transcript_id)
   if (length(transcripts_on_chr) == 0) {
@@ -112,18 +121,16 @@ for (chr_name in chromosomes) {
   }
   
   message(paste("Found", length(transcripts_on_chr), "transcripts with CDS annotations on", chr_name, "to process."))
-
-  pb <- progress_bar$new(
-    format = paste("  Chromosome", chr_name, "[:bar] :percent ETA: :eta (:current/:total transcripts)"),
-    total = length(transcripts_on_chr),
-    width = 80
-  )
-
+  
+  
   chromosome_results <- list()
-
+  
+  current_idx <- 1
+  
   for (current_transcript_id in transcripts_on_chr) {
-    pb$tick()
-
+    
+    message(paste("Processing transcript:", current_transcript_id, current_idx, "/", length(transcripts_on_chr)))
+    
     # Check if the full transcript sequence exists in the FASTA data
     if (!current_transcript_id %in% names(transcript_seqs_full)) {
       # warning(paste("Transcript", current_transcript_id, "not found in FASTA file. Skipping."))
@@ -131,12 +138,11 @@ for (chr_name in chromosomes) {
     }
     full_transcript_dna <- transcript_seqs_full[[current_transcript_id]]
     if (length(full_transcript_dna) == 0) {
-        # warning(paste("Transcript", current_transcript_id, "is empty in FASTA. Skipping."))
-        next
+      # warning(paste("Transcript", current_transcript_id, "is empty in FASTA. Skipping."))
+      next
     }
-
+    
     # Get CDS genomic ranges for this transcript from TxDb
-    # These are essential for calculating the true CDS length
     cds_genomic_ranges_for_tx <- cds_grlist_by_tx[[current_transcript_id]]
     if (is.null(cds_genomic_ranges_for_tx) || length(cds_genomic_ranges_for_tx) == 0) {
       # warning(paste("No CDS genomic ranges found in TxDb for transcript", current_transcript_id, ". Skipping."))
@@ -144,45 +150,45 @@ for (chr_name in chromosomes) {
     }
     len_cds_from_txdb <- sum(width(cds_genomic_ranges_for_tx))
     if (len_cds_from_txdb == 0 || len_cds_from_txdb %% 3 != 0) {
-        # warning(paste("Total CDS length from TxDb is 0 or not a multiple of 3 for transcript", current_transcript_id, "(Length:", len_cds_from_txdb,"). Skipping."))
-        next
+      # warning(paste("Total CDS length from TxDb is 0 or not a multiple of 3 for transcript", current_transcript_id, "(Length:", len_cds_from_txdb,"). Skipping."))
+      next
     }
     
     # Get 5' UTR ranges for this transcript from TxDb
     utr5_ranges_for_tx <- five_utr_by_tx[[current_transcript_id]] # This can be NULL if no 5'UTR
     len_5utr_from_txdb <- if (!is.null(utr5_ranges_for_tx)) sum(width(utr5_ranges_for_tx)) else 0
-
+    
     # Define coding_dna_sequence based on 5'UTR length and CDS length from TxDb
     cds_start_in_full_tx_seq <- len_5utr_from_txdb + 1
     cds_end_in_full_tx_seq <- len_5utr_from_txdb + len_cds_from_txdb
-
+    
     if (cds_end_in_full_tx_seq > length(full_transcript_dna)) {
-    #   warning(paste("Calculated CDS end (", cds_end_in_full_tx_seq,
-    #                 ") exceeds full transcript length (", length(full_transcript_dna),
-    #                 ") for transcript", current_transcript_id, ". Check UTR/CDS annotations. Skipping."))
+      #   warning(paste("Calculated CDS end (", cds_end_in_full_tx_seq,
+      #                 ") exceeds full transcript length (", length(full_transcript_dna),
+      #                 ") for transcript", current_transcript_id, ". Check UTR/CDS annotations. Skipping."))
       next
     }
-     if (cds_start_in_full_tx_seq > cds_end_in_full_tx_seq) { # Should not happen if len_cds_from_txdb > 0
-    #    warning(paste("Calculated CDS start (", cds_start_in_full_tx_seq,
-    #                 ") is after CDS end (", cds_end_in_full_tx_seq,
-    #                 ") for transcript", current_transcript_id, ". Skipping."))
-        next
+    if (cds_start_in_full_tx_seq > cds_end_in_full_tx_seq) { # Should not happen if len_cds_from_txdb > 0
+      #    warning(paste("Calculated CDS start (", cds_start_in_full_tx_seq,
+      #                 ") is after CDS end (", cds_end_in_full_tx_seq,
+      #                 ") for transcript", current_transcript_id, ". Skipping."))
+      next
     }
-
-
+    
+    
     coding_dna_sequence <- subseq(full_transcript_dna, start = cds_start_in_full_tx_seq, end = cds_end_in_full_tx_seq)
-
+    
     # Final check on the extracted CDS sequence
     if (length(coding_dna_sequence) == 0 || length(coding_dna_sequence) %% 3 != 0) {
-    #   warning(paste("Extracted CDS for transcript", current_transcript_id,
-    #                 "has length not divisible by 3 or is empty after subseq. Length:",
-    #                 length(coding_dna_sequence), ". Original CDS length from TxDb:", len_cds_from_txdb, ". Skipping."))
+      #   warning(paste("Extracted CDS for transcript", current_transcript_id,
+      #                 "has length not divisible by 3 or is empty after subseq. Length:",
+      #                 length(coding_dna_sequence), ". Original CDS length from TxDb:", len_cds_from_txdb, ". Skipping."))
       next
     }
-
+    
     transcript_mutation_data <- list()
     num_codons <- length(coding_dna_sequence) / 3
-
+    
     for (codon_idx in 1:num_codons) {
       codon_start_pos_in_cds <- (codon_idx - 1) * 3 + 1
       original_codon_dna <- subseq(coding_dna_sequence, start = codon_start_pos_in_cds, end = codon_start_pos_in_cds + 2)
@@ -192,27 +198,27 @@ for (chr_name in chromosomes) {
         # warning(paste("Original codon contains 'N':", as.character(original_codon_dna), "for T:", current_transcript_id, "Codon:", codon_idx, ". Skipping codon."))
         next
       }
-
+      
       original_aa <- tryCatch({
-          # Use if.fuzzy.codon="error" as Ns should be caught above
-          as.character(Biostrings::translate(original_codon_dna, if.fuzzy.codon = "error"))
+        # Use if.fuzzy.codon="error" as Ns should be caught above
+        as.character(Biostrings::translate(original_codon_dna, if.fuzzy.codon = "error"))
       }, error = function(e) {
-          # warning(paste("Could not translate original codon:", as.character(original_codon_dna), "for T:", current_transcript_id, ". Error:", e$message, ". Skipping codon."))
-          NA_character_
+        # warning(paste("Could not translate original codon:", as.character(original_codon_dna), "for T:", current_transcript_id, ". Error:", e$message, ". Skipping codon."))
+        NA_character_
       })
-
+      
       if (is.na(original_aa)){
-          next
+        next
       }
-
+      
       for (pos_in_codon in 1:3) {
         original_base <- as.character(subseq(original_codon_dna, pos_in_codon, pos_in_codon))
         # Ensure original base is not 'N' (already handled by grepl above for the whole codon)
         # If somehow an 'N' got through or if we want to be extra careful at base level:
         if (original_base == "N") next 
-
+        
         alternative_bases <- DNA_BASES[DNA_BASES != original_base]
-
+        
         for (alt_base in alternative_bases) {
           # Create mutated codon
           mutated_codon_dna_mut_char <- strsplit(as.character(original_codon_dna), "")[[1]]
@@ -220,12 +226,12 @@ for (chr_name in chromosomes) {
           mutated_codon_dna_mut <- DNAString(paste0(mutated_codon_dna_mut_char, collapse=""))
           
           mutated_aa <- tryCatch({
-              as.character(Biostrings::translate(mutated_codon_dna_mut, if.fuzzy.codon = "error"))
+            as.character(Biostrings::translate(mutated_codon_dna_mut, if.fuzzy.codon = "error"))
           }, error = function(e) {
-              # warning(paste("Could not translate mutated codon:", as.character(mutated_codon_dna_mut), "for T:", current_transcript_id, ". Error:", e$message, ". Skipping mutation."))
-              NA_character_
+            # warning(paste("Could not translate mutated codon:", as.character(mutated_codon_dna_mut), "for T:", current_transcript_id, ". Error:", e$message, ". Skipping mutation."))
+            NA_character_
           })
-
+          
           if (is.na(mutated_aa)){
             next
           }
@@ -250,16 +256,17 @@ for (chr_name in chromosomes) {
     if (length(transcript_mutation_data) > 0) {
       chromosome_results[[current_transcript_id]] <- dplyr::bind_rows(transcript_mutation_data)
     }
-  } # End transcript loop
-
+    current_idx <- current_idx + 1
+    } # End transcript loop
+  
   if (length(chromosome_results) > 0) {
     all_mutation_results[[chr_name]] <- dplyr::bind_rows(chromosome_results)
   }
   message(paste("\nFinished processing chromosome:", chr_name))
-
+  
 } # End chromosome loop
 
-# --- 5. Combine All Results ---
+# --- 3. Combine All Results ---
 message("\nCombining all results...")
 final_results_df <- dplyr::bind_rows(all_mutation_results)
 
@@ -271,20 +278,3 @@ if (nrow(final_results_df) > 0) {
 } else {
   message("Analysis complete. No results generated (this might indicate issues with input files, filtering, or annotations).")
 }
-
-# Example of how to view some results:
-# if (nrow(final_results_df) > 0 && "transcript_id" %in% colnames(final_results_df) && length(unique(final_results_df$transcript_id)) > 0) {
-#   first_tx_id_with_results_index <- which(!is.na(final_results_df$transcript_id))[1]
-#   if(!is.na(first_tx_id_with_results_index)) {
-#      first_tx_id_with_results <- final_results_df$transcript_id[first_tx_id_with_results_index]
-#      print(paste("Example results for transcript:", first_tx_id_with_results))
-#      print(head(final_results_df[final_results_df$transcript_id == first_tx_id_with_results & !is.na(final_results_df$transcript_id), ], 10))
-#   }
-#
-#   # Summary
-#   print("Summary of mutation types per chromosome:")
-#   print(final_results_df %>%
-#     filter(!is.na(chromosome) & !is.na(mutation_type)) %>% # Ensure no NA groups
-#     group_by(chromosome, mutation_type) %>%
-#     summarise(count = n(), .groups = 'drop'))
-# }

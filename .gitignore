@@ -7,3 +7,5 @@ data/
 # ignore cache files
 __pycache__/
 .Rproj.user
+*.RData
+R/.RData
