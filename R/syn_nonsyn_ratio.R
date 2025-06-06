@@ -4,6 +4,8 @@ library(dplyr)
 library(stringr)
 library(progress)
 
+
+
 # Define the file paths
 gtf_file_path <- "../data/gencode.v48.annotation.gtf"
 fasta_file_path <- "../data/gencode.v48.transcripts.fa"

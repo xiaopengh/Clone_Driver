@@ -1,3 +1,34 @@
+library(data.table)
+library(rtracklayer)
+library(Biostrings)
+library(dplyr)
+library(stringr)
+
+
+# ==============================================================================
+
+# Use gencode release 19
+
+
+
+# ==============================================================================
+
+
+gtf_dt <- as.data.table(as.data.frame(gtf_data))
+
+setnames(gtf_dt, old = c("seqnames", "start", "end", "strand"), new = c("Chromosome", "Start_Position", "End_Position", "Strand"))
+
+cdsgtf_dt <- gtf_dt[gtf_dt$type == "CDS"]
+
+chr_names <- unique(cdsgtf_dt$Chromosome)
+
+cdsgtf_dt_byChr <- list()
+
+for (chr in chr_names) {
+  cdsgtf_dt_byChr[[chr]] <- cdsgtf_dt[Chromosome == chr]
+}
+
+
 pvarCDSannotate <- function(cdsgtf, .genome) {
   
   # ensure order of this chromosome
@@ -78,3 +109,5 @@ pvarCDSannotate <- function(cdsgtf, .genome) {
   return(pmutdt)
   
 }
+
+pmutdt <- pvarCDSannotate(gtf_dt, .genome = transcript_seqs)
