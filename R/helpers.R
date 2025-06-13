@@ -1,33 +1,60 @@
-library(data.table)
-library(rtracklayer)
-library(Biostrings)
-library(dplyr)
-library(stringr)
-
-
-# ==============================================================================
-
-# Use gencode release 19
-
-
-
-# ==============================================================================
-
-
-gtf_dt <- as.data.table(as.data.frame(gtf_data))
-
-setnames(gtf_dt, old = c("seqnames", "start", "end", "strand"), new = c("Chromosome", "Start_Position", "End_Position", "Strand"))
-
-cdsgtf_dt <- gtf_dt[gtf_dt$type == "CDS"]
-
-chr_names <- unique(cdsgtf_dt$Chromosome)
-
-cdsgtf_dt_byChr <- list()
-
-for (chr in chr_names) {
-  cdsgtf_dt_byChr[[chr]] <- cdsgtf_dt[Chromosome == chr]
+infoExtract <- function(gtf, infoColName, key, type) {
+  
+  n <- length(key)
+  if (n != length(type)) stop("key & type must be of same length")
+  
+  # parse info into data.frame keeping track of feature index
+  info <- strsplit(gtf[[infoColName]], ";")
+  infodt <- data.table::data.table(
+    info = unlist(info),
+    idx = unlist(mapply(function(v, i) rep(i, length(v)), info, 1:length(info)))
+  )
+  infodt$info <- gsub("\"", "", infodt$info)
+  infodt$info <- trimws(infodt$info)
+  
+  # format keys for matching
+  fkey <- ifelse(type == "tag", paste("tag", key), paste0("^", key, " "))
+  
+  # match
+  for (i in 1:n) {
+    
+    if (type[i] == "tag") {
+      
+      r <- getTag(infodt, fkey[i], nrow(gtf))
+      
+    } else {
+      
+      r <- getMulti(infodt, fkey[i], nrow(gtf))
+      
+    }
+    gtf[[ key[i] ]] <- r
+    
+  }
+  
+  return(gtf)
+  
 }
 
+getMulti <- function(infodt, multi, nfeatures) {
+  
+  # get values for the queried multilevel key for each feature in gtf
+  r <- rep(NA_character_, nfeatures)
+  ismulti <- grepl(multi, infodt$info)
+  r[infodt$idx[ismulti]] <- gsub(multi, "", infodt$info[ismulti])
+  
+  return(r)
+  
+}
+
+getTag <- function(infodt, tag, nfeatures) {
+  
+  # get values for the queried binary key for each feature in gtf
+  r <- rep(0L, nfeatures)
+  r[infodt$idx[infodt$info == tag]] <- 1L
+  
+  return(r)
+  
+}
 
 pvarCDSannotate <- function(cdsgtf, .genome) {
   
@@ -100,7 +127,7 @@ pvarCDSannotate <- function(cdsgtf, .genome) {
   pmutRanges$type[pmutRanges$wtAA != "*" & pmutRanges$mutAA == "*"] <- "nonsense"
   pmutRanges$type[pmutRanges$wtAA == "*" & pmutRanges$mutAA != "*"] <- "nonstop"
   
-  # convert to dta.table
+  # convert to data.table
   names(pmutRanges) <- 1:length(pmutRanges)
   pmutdt <- data.table::data.table(as.data.frame(pmutRanges))
   pmutdt[, c("width", "strand", "end") := NULL]
@@ -109,5 +136,3 @@ pvarCDSannotate <- function(cdsgtf, .genome) {
   return(pmutdt)
   
 }
-
-pmutdt <- pvarCDSannotate(gtf_dt, .genome = transcript_seqs)
