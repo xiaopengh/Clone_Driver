@@ -1,0 +1,12 @@
+.Rproj.user
+*.RData
+.RData
+.Rhistory
+.RDataTmp
+.RDataTmp1
+.RDataTmp2
+*-checkpoint.RData
+*.rds
+renv
+*.pdf
+*.Rplot*
