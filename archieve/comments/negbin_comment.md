@@ -1,1 +1,0 @@
-Negative Binomial models also show a significant relationship. Likelihood ratio tests (comparing NegBin to Poisson, not shown here but standard practice) often confirm NegBin is a better fit for overdispersed data. Comparing raw likelihoods across different model families (Poisson vs NegBin) requires caution.

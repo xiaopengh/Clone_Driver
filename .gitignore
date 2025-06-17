@@ -1,5 +1,8 @@
 # ignore venv folder
-venv/
+.venv/
+
+# archive files
+archive/
 
 # ignore mc3 data files
 data/
