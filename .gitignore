@@ -6,7 +6,7 @@ data/
 
 # ignore cache files
 __pycache__/
-.Rproj.user
+R/.Rproj.user
 R/*.RData
 R/.RData
 R/.Rhistory
@@ -19,13 +19,14 @@ R/.Rhistory
 R/.RDataTmp*
 R/*-checkpoint.RData
 R/*.rds
+R/renv
 
 # RStudio project files (user-specific)
 .Rproj.user/
 
 # Plot and Figure outputs (if they are generated during runtime)
-*.pdf
-*.Rplot*
+R/*.pdf
+R/*.Rplot*
 
 # Common OS-specific temporary/metadata files
-Thumbs.db
+R/Thumbs.db
