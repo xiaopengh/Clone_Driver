@@ -152,21 +152,30 @@ rm(pmutRanges)
 
 # regroup data table by transcript_id then calculate dn/ds by transcript_id
 # pmutdt_bytxid <- split(pmutdt, by = "transcript_id")
-ratio_bytxid <- split(pmutdt, by = "transcript_id") %>%
-  sapply(
-    function(dt) {
-      # Number of non-synonymous mutations (or not "syn")
-      non_syn_count <- sum(dt$type != "syn")
-      
-      # Number of synonymous mutations ("syn")
-      syn_count <- sum(dt$type == "syn")
-      
-      # Handle cases where syn_count might be zero to avoid division by zero
-      if (syn_count > 0) {
-        return(non_syn_count / syn_count)
-      } else {
-        # Decide how to handle this: NA, 0, or Inf depending on your interpretation
-        return(NA) # Or Inf if you consider it an infinite ratio
-      }
-    }
-  )
+# dnds_bytxid <- split(pmutdt, by = "transcript_id") %>%
+#   sapply(
+#     function(dt) {
+#       # Number of non-synonymous mutations (or not "syn")
+#       non_syn_count <- sum(dt$type != "syn")
+#       
+#       # Number of synonymous mutations ("syn")
+#       syn_count <- sum(dt$type == "syn")
+#       
+#       return()
+#             
+#       # Handle cases where syn_count might be zero to avoid division by zero
+#       if (syn_count > 0) {
+#         return(non_syn_count / syn_count)
+#       } else {
+#         # Decide how to handle this: NA, 0, or Inf depending on your interpretation
+#         return(NA) # Or Inf if you consider it an infinite ratio
+#       }
+#     }
+#   )
+
+summary_txid <- pmutdt[, .(
+  non_syn_count = sum(type != "syn"),
+  syn_count = sum(type == "syn")
+), by = transcript_id]
+
+

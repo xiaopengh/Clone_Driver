@@ -75,6 +75,38 @@ ggplot(df, aes(x = ratio)) +
 rm(df, sd_factor)
 
 
+gtf_dt$type %>% unique()
+
+ls()
+
+?fread
+
+
+g <- ggplot(data = mc3_raw) 
+
+
+
+# ==============================================================================
+
+mc3_raw <- fread("../data/mc3.maf", sep = "\t")
+
+# mc3_raw[, .(count_of_rows = .N), by = Transcript_ID]
+# 
+# library(ggplot2)
+# ggplot(data = mc3_raw[, .(count_of_rows = .N), by = Transcript_ID]) +
+#   geom_histogram(mapping = aes(x = count_of_rows), bins = 50)
+
+# add is_sysnonymous column based on Variant_Classification 
+mc3_raw[, is_synonymous := (Variant_Classification == "Silent")]
+
+# Split transcript_id in summary obtained from pmutdt from its raw id and version numbers
+split_matrix <- stringr::str_split_fixed(summary_txid$transcript_id, pattern = "\\.", n = 2)
+summary_txid[, maf_txid := split_matrix[, 1]]
+summary_txid[, txid_version := split_matrix[, 2]]
+rm(split_matrix)
+
+
+
 
 
 

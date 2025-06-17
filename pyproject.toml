@@ -1,0 +1,44 @@
+[project]
+name = "clone-driver"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "xiaopengh",email = "mathys.zhang@yahoo.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = "^3.11"
+dependencies = [
+    # Add any core dependencies here if they are absolutely essential for the main function.
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
+
+# --- NEW SECTIONS FOR GROUPS ---
+
+# Development tools and interactive environment
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.5" 
+ipython = "^9.0.2"   
+tqdm = "^4.67.1"     
+
+# Data analysis and scientific computing libraries
+[tool.poetry.group.data.dependencies]
+numpy = "^2.3.0"     
+pandas = "^2.3.0"    
+scipy = "^1.15.3"    
+statsmodels = "^0.14.4" # Updated version constraint for latest stable
+scikit-learn = "^1.7.0"
+
+# Plotting and visualization libraries
+[tool.poetry.group.plotting.dependencies]
+plotly = "^5.21.0"
+seaborn = "^0.13.2"
+matplotlib = "^3.10.3"
+
