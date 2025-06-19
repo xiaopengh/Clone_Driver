@@ -26,8 +26,6 @@ message("GTF file loaded.")
 
 gtf_dt <- as.data.table(as.data.frame(gtf_data))
 
-save.image()
-
 # Read transcript FASTA file
 message("Reading FASTA file...")
 chromosomes <- tryCatch({
@@ -178,4 +176,5 @@ summary_txid <- pmutdt[, .(
   syn_count = sum(type == "syn")
 ), by = transcript_id]
 
-
+# Remove temp data for one chromosome loop
+rm(chromosome, gtf_dt, multiple3, reverse)

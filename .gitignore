@@ -12,3 +12,4 @@ __pycache__/
 
 # Plot and Figure outputs (if they are generated during runtime)
 *.pdf
+.Rproj.user

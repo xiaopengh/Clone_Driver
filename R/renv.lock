@@ -3,6 +3,26 @@
     "Version": "4.5.0",
     "Repositories": [
       {
+        "Name": "BioCsoft",
+        "URL": "https://bioconductor.org/packages/3.21/bioc"
+      },
+      {
+        "Name": "BioCann",
+        "URL": "https://bioconductor.org/packages/3.21/data/annotation"
+      },
+      {
+        "Name": "BioCexp",
+        "URL": "https://bioconductor.org/packages/3.21/data/experiment"
+      },
+      {
+        "Name": "BioCworkflows",
+        "URL": "https://bioconductor.org/packages/3.21/workflows"
+      },
+      {
+        "Name": "BioCbooks",
+        "URL": "https://bioconductor.org/packages/3.21/books"
+      },
+      {
         "Name": "CRAN",
         "URL": "https://cloud.r-project.org"
       }
@@ -594,6 +614,24 @@
       "Author": "R Special Interest Group on Databases (R-SIG-DB) [aut], Hadley Wickham [aut], Kirill Müller [aut, cre] (<https://orcid.org/0000-0002-1416-3412>), R Consortium [fnd]",
       "Maintainer": "Kirill Müller <kirill@cynkra.com>",
       "Repository": "CRAN"
+    },
+    "DNAcopy": {
+      "Package": "DNAcopy",
+      "Version": "1.82.0",
+      "Source": "Bioconductor",
+      "Title": "DNA Copy Number Data Analysis",
+      "Author": "Venkatraman E. Seshan, Adam Olshen",
+      "Description": "Implements the circular binary segmentation (CBS)  algorithm to segment DNA copy number data and identify genomic regions with abnormal copy number.",
+      "Maintainer": "Venkatraman E. Seshan <seshanv@mskcc.org>",
+      "LazyData": "yes",
+      "License": "GPL (>= 2)",
+      "biocViews": "Microarray, CopyNumberVariation",
+      "NeedsCompilation": "yes",
+      "git_url": "https://git.bioconductor.org/packages/DNAcopy",
+      "git_branch": "RELEASE_3_21",
+      "git_last_commit": "10cfba5",
+      "git_last_commit_date": "2025-04-15",
+      "Repository": "Bioconductor 3.21"
     },
     "DelayedArray": {
       "Package": "DelayedArray",
@@ -5171,6 +5209,66 @@
       "Maintainer": "Ben Bolker <bbolker+lme4@gmail.com>",
       "Repository": "CRAN"
     },
+    "maftools": {
+      "Package": "maftools",
+      "Version": "2.24.0",
+      "Source": "Bioconductor",
+      "Type": "Package",
+      "Title": "Summarize, Analyze and Visualize MAF Files",
+      "Date": "2021-04-30",
+      "Authors@R": "person(given = \"Anand\", family = \"Mayakonda\", role = c(\"aut\", \"cre\"), email = \"anand_mt@hotmail.com\", comment = c(ORCID = \"0000-0003-1162-687X\"))",
+      "Maintainer": "Anand Mayakonda <anand_mt@hotmail.com>",
+      "Description": "Analyze and visualize Mutation Annotation Format (MAF) files from large scale sequencing studies. This package provides various functions to perform most commonly used analyses in cancer genomics and to create feature rich customizable visualzations with minimal effort.",
+      "License": "MIT + file LICENSE",
+      "URL": "https://github.com/PoisonAlien/maftools",
+      "BugReports": "https://github.com/PoisonAlien/maftools/issues",
+      "Depends": [
+        "R (>= 4.1.0)"
+      ],
+      "Imports": [
+        "data.table",
+        "grDevices",
+        "methods",
+        "RColorBrewer",
+        "Rhtslib",
+        "survival",
+        "DNAcopy",
+        "pheatmap"
+      ],
+      "Suggests": [
+        "berryFunctions",
+        "Biostrings",
+        "BSgenome",
+        "BSgenome.Hsapiens.UCSC.hg19",
+        "GenomicRanges",
+        "IRanges",
+        "knitr",
+        "mclust",
+        "MultiAssayExperiment",
+        "NMF",
+        "R.utils",
+        "RaggedExperiment",
+        "rmarkdown",
+        "S4Vectors",
+        "curl"
+      ],
+      "LinkingTo": [
+        "Rhtslib",
+        "zlibbioc"
+      ],
+      "VignetteBuilder": "knitr",
+      "biocViews": "DataRepresentation, DNASeq, Visualization, DriverMutation, VariantAnnotation, FeatureExtraction, Classification, SomaticMutation, Sequencing, FunctionalGenomics, Survival",
+      "Encoding": "UTF-8",
+      "NeedsCompilation": "yes",
+      "RoxygenNote": "7.3.1",
+      "SystemRequirements": "GNU make",
+      "git_url": "https://git.bioconductor.org/packages/maftools",
+      "git_branch": "RELEASE_3_21",
+      "git_last_commit": "e3a5f17",
+      "git_last_commit_date": "2025-04-15",
+      "Repository": "Bioconductor 3.21",
+      "Author": "Anand Mayakonda [aut, cre] (ORCID: <https://orcid.org/0000-0003-1162-687X>)"
+    },
     "magrittr": {
       "Package": "magrittr",
       "Version": "2.0.3",
@@ -5623,6 +5721,36 @@
       "LazyData": "true",
       "NeedsCompilation": "no",
       "Author": "Ulrich Halekoh [aut, cph], Søren Højsgaard [aut, cre, cph]",
+      "Repository": "CRAN"
+    },
+    "pheatmap": {
+      "Package": "pheatmap",
+      "Version": "1.0.13",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Pretty Heatmaps",
+      "Date": "2025-06-05",
+      "Authors@R": "person(given = \"Raivo\", family = \"Kolde\", role = c(\"aut\", \"cre\"), email = \"rkolde@gmail.com\")",
+      "Depends": [
+        "R (>= 2.0)"
+      ],
+      "Description": "Implementation of heatmaps that offers more control over dimensions and appearance.",
+      "Imports": [
+        "grid",
+        "RColorBrewer",
+        "scales",
+        "gtable",
+        "stats",
+        "grDevices",
+        "graphics"
+      ],
+      "License": "GPL-2",
+      "Encoding": "UTF-8",
+      "LazyLoad": "yes",
+      "RoxygenNote": "7.3.2",
+      "NeedsCompilation": "no",
+      "Author": "Raivo Kolde [aut, cre]",
+      "Maintainer": "Raivo Kolde <rkolde@gmail.com>",
       "Repository": "CRAN"
     },
     "pillar": {
@@ -7219,6 +7347,33 @@
       "BugReports": "https://github.com/vubiostat/r-yaml/issues",
       "NeedsCompilation": "yes",
       "Repository": "CRAN"
+    },
+    "zlibbioc": {
+      "Package": "zlibbioc",
+      "Version": "1.54.0",
+      "Source": "Bioconductor",
+      "Type": "Package",
+      "Title": "An R packaged zlib-1.2.5",
+      "Author": "Martin Morgan",
+      "Maintainer": "Bioconductor Package Maintainer <maintainer@bioconductor.org>",
+      "Description": "This package uses the source code of zlib-1.2.5 to create libraries for systems that do not have these available via other means (most Linux and Mac users should have system-level access to zlib, and no direct need for this package). See the vignette for instructions on use.",
+      "Suggests": [
+        "BiocStyle",
+        "knitr"
+      ],
+      "biocViews": "Infrastructure",
+      "URL": "https://bioconductor.org/packages/zlibbioc",
+      "BugReports": "https://github.com/Bioconductor/zlibbioc/issues",
+      "License": "Artistic-2.0 + file LICENSE",
+      "LazyLoad": "yes",
+      "VignetteBuilder": "knitr",
+      "PackageStatus": "Deprecated",
+      "git_url": "https://git.bioconductor.org/packages/zlibbioc",
+      "git_branch": "RELEASE_3_21",
+      "git_last_commit": "cbbff22",
+      "git_last_commit_date": "2025-04-15",
+      "Repository": "Bioconductor 3.21",
+      "NeedsCompilation": "yes"
     }
   }
 }
