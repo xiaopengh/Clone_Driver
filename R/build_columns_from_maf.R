@@ -4,6 +4,15 @@ library(Biostrings)
 library(dplyr)
 library(stringr)
 
+# ==============================================================================
+
+ # This part of code is already implemented into helpers.R
+ # build_mc3_summary_bytx, compute_dN_dS_metrics
+ # This script is for archive only
+
+# ==============================================================================
+
+
 # dataset import
 mc3_raw <- fread("../data/mc3.maf", sep = "\t")
 mc3 <- mc3_raw[, .(Hugo_Symbol, t_alt_count, t_ref_count, Segment_Mean, Purity, Variant_Classification, Transcript_ID)]
@@ -53,10 +62,3 @@ summary_txid[, dN_to_dS_clonal := ifelse(
 summary_txid[, dN_to_dS_subclonal := ifelse(
   (non_syn_count == 0 | syn_count == 0 | obs_dS_subclonal == 0),
   NA_real_ ,(obs_dN_subclonal / non_syn_count) / (obs_dS_subclonal / syn_count) )]
-
-
-
-
-
-
-

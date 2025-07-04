@@ -275,7 +275,7 @@ build_mc3_summary_bytx <- function(mc3){
     obs_dS_clonal = sum(!is_subclonal & is_synonymous),
     obs_dN_subclonal = sum(is_subclonal & !is_synonymous),
     obs_dS_subclonal = sum(is_subclonal & is_synonymous)
-  ), by = Transcript_ID]
+  ), by = .(Transcript_ID, Hugo_Symbol)]
   
   message("Built mc3 summary by transcript.")
   

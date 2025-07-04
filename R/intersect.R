@@ -6,6 +6,9 @@ library(dplyr)
 
 # ==============================================================================
 # Prepare working data
+
+# This part should be discarded cuz in dn/ds analysis the zero mutation genes are naturally included  
+
 # ==============================================================================
 
 # 1. Read the BED file of sequenced regions
