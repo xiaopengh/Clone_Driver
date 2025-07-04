@@ -92,7 +92,7 @@ pvarCDSannotate <- function(cdsgtf, .genome) {
   siteRanges$pyrimidine[reverse] <- Biostrings::reverseComplement(siteRanges$pyrimidine[reverse])
   
   # get the codon and aminoacid that each site influences
-  siteRanges$frame <- ((siteRanges$relpos + 2L) %% 3L) + 1L # gives 1 if in frame, 2 for one base out of frame and 3 for two bases out of frame
+  siteRanges$frame <- ((siteRanges$relpos + 2L) %% 3L) + 1L # gives 1 if in frame, 2 for one base out of frame etc
   siteRanges$codon <- rep(
     xscat(
       siteRanges$codingRef[siteRanges$frame == 1],

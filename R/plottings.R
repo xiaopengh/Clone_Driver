@@ -4,7 +4,9 @@ library(pROC)  # For ROC curves
 library(data.table) 
 library(patchwork)
 
-reverse_offset <- function(response, offset_term){exp(log(response) - offset_term)}
+reverse_offset <- function(response, offset_term) {
+  exp(log(response) - offset_term)
+  }
 
 plots <- list()
 
@@ -51,12 +53,14 @@ plots$g_reg
 plots$g_dnds | plots$g_reg
 
 # Residuals histograms
-plots$h1 <- plots$g + geom_histogram(aes(x = Pearson_Residual, y = after_stat(density)), bins = 200, fill = "lightblue", color = "white", lwd = 0.2) +
+plots$h1 <- plots$g + geom_histogram(aes(x = Pearson_Residual, y = after_stat(density)), 
+                                     bins = 200, fill = "lightblue", color = "white", lwd = 0.2) +
   coord_cartesian(xlim = c(-5, 5)) +
   labs(title = "Distribution of Pearson Residuals", x = "Residual Value", y = "Frequency") +
   theme_minimal()
 
-plots$h2 <- plots$g + geom_histogram(aes(x = Deviance_Residual, y = after_stat(density)), bins = 200, fill = "lightgreen", color = "white", lwd = 0.2) +
+plots$h2 <- plots$g + geom_histogram(aes(x = Deviance_Residual, y = after_stat(density)), 
+                                     bins = 200, fill = "lightgreen", color = "white", lwd = 0.2) +
   coord_cartesian(xlim = c(-5, 5)) +
   labs(title = "Distribution of Deviance Residuals", x = "Residual Value", y = "Frequency") + 
   theme_minimal()
@@ -103,7 +107,8 @@ plots$F1_thres <- ggplot(data = all_coords) +
 
 # negbin regression with clonal to subclonal plot and quantiles of upper and lower levels  
 ord <- order(x)
-plots$negbin_classification <- plots$g + stat_bin_2d(mapping = aes(x = Clonal_Count, y = Subclonal_Count), bins = 200, geom = "tile", alpha = 0.8) +
+plots$negbin_classification <- plots$g + stat_bin_2d(mapping = aes(x = Clonal_Count, y = Subclonal_Count), 
+                                                     bins = 200, geom = "tile", alpha = 0.8) +
   scale_fill_binned(breaks = c(0, 5, 10, 20, 50, 100),
                     type = "viridis",  # or "plasma", "inferno", "magma"
                     direction = -1,

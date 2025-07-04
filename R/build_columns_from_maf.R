@@ -57,8 +57,8 @@ summary_txid[is.na(summary_txid)] <- 0
 # calculate dN/dS ratios for clonal and subclonal mutations
 summary_txid[, dN_to_dS_clonal := ifelse( 
   (non_syn_count == 0 | syn_count == 0 | obs_dS_clonal == 0),
-  NA_real_ ,(obs_dN_clonal / non_syn_count) / (obs_dS_clonal / syn_count) )]
+  NA_real_, (obs_dN_clonal / non_syn_count) / (obs_dS_clonal / syn_count) )]
 
 summary_txid[, dN_to_dS_subclonal := ifelse(
   (non_syn_count == 0 | syn_count == 0 | obs_dS_subclonal == 0),
-  NA_real_ ,(obs_dN_subclonal / non_syn_count) / (obs_dS_subclonal / syn_count) )]
+  NA_real_, (obs_dN_subclonal / non_syn_count) / (obs_dS_subclonal / syn_count) )]

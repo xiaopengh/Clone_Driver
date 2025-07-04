@@ -14,7 +14,8 @@ rm(mc3_raw)
 # Perform stat tests on mc3 dataset and build the summary table by txid
 mc3_summary_dt <- build_mc3_summary_bytx(mc3)
 
-clonal_summary_binom <- merge.data.table(mc3_summary_dt[, c("Transcript_ID", "Hugo_Symbol")], summary_dt, by.x = "Transcript_ID", by.y = "maf_txid") %>% na.omit()
+clonal_summary_binom <- merge.data.table(mc3_summary_dt[, c("Transcript_ID", "Hugo_Symbol")], 
+                                         summary_dt, by.x = "Transcript_ID", by.y = "maf_txid") %>% na.omit()
 
 clonal_summary_binom <- clonal_summary_binom[, c("Clonal_Count", "Subclonal_Count") :=
                                                .(obs_dS_clonal + obs_dN_clonal, 
@@ -89,8 +90,8 @@ alpha <- 0.05
 
 # Calculate upper and lower quantiles based on selected alpha
 clonal_summary_binom[, `:=`(
-  upper_quantile = qnbinom(alpha/2, size = negbin_model$theta, mu = Predicted_NegBin, lower.tail = FALSE),
-  lower_quantile = qnbinom(alpha/2, size = negbin_model$theta, mu = Predicted_NegBin, lower.tail = TRUE)
+  upper_quantile = qnbinom(alpha / 2, size = negbin_model$theta, mu = Predicted_NegBin, lower.tail = FALSE),
+  lower_quantile = qnbinom(alpha / 2, size = negbin_model$theta, mu = Predicted_NegBin, lower.tail = TRUE)
 )]
 
 

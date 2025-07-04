@@ -4,7 +4,7 @@
 
 # ==============================================================================
 
-extract_coding_sites <- function(gtf_dt, show_progress = TRUE){
+extract_coding_sites <- function(gtf_dt, show_progress = TRUE) {
   
   if (show_progress) {
     if (!requireNamespace("progress", quietly = TRUE)) {
@@ -141,7 +141,7 @@ extract_coding_sites <- function(gtf_dt, show_progress = TRUE){
 
 # ==============================================================================
 
-determine_SNP_effects <- function(siteRanges, show_progress = TRUE){
+determine_SNP_effects <- function(siteRanges, show_progress = TRUE) {
   
   if (show_progress) {
     if (!requireNamespace("progress", quietly = TRUE)) {
@@ -212,7 +212,7 @@ determine_SNP_effects <- function(siteRanges, show_progress = TRUE){
 #   message("Determining SNP effects on coding sites...")
 #   
 #   # get the codon and aminoacid that each site influences
-#   siteRanges$frame <- ((siteRanges$relpos + 2L) %% 3L) + 1L # gives 1 if in frame, 2 for one base out of frame and 3 for two bases out of frame
+#   siteRanges$frame <- ((siteRanges$relpos + 2L) %% 3L) + 1L # gives 1 if in frame, 2 for one base out of frame etc
 #   siteRanges$codon <- rep(
 #     xscat(
 #       siteRanges$codingRef[siteRanges$frame == 1],
@@ -253,7 +253,7 @@ determine_SNP_effects <- function(siteRanges, show_progress = TRUE){
 
 # ==============================================================================
 
-build_mc3_summary_bytx <- function(mc3){
+build_mc3_summary_bytx <- function(mc3) {
   
   message("Building mc3 summary by transcript...")
   
@@ -284,7 +284,7 @@ build_mc3_summary_bytx <- function(mc3){
 
 # ==============================================================================
 
-compute_dN_dS_metrics <- function(pmutdt){
+compute_dN_dS_metrics <- function(pmutdt) {
   
   message("Computing dN/dS metrics from pmutdt...")
   
@@ -317,11 +317,11 @@ compute_dN_dS_metrics <- function(pmutdt){
   # calculate dN/dS ratios for clonal and subclonal mutations
   summary_txid[, dN_to_dS_clonal := ifelse( 
     (non_syn_count == 0 | syn_count == 0 | obs_dS_clonal == 0),
-    NA_real_ ,(obs_dN_clonal / non_syn_count) / (obs_dS_clonal / syn_count) )]
+    NA_real_, (obs_dN_clonal / non_syn_count) / (obs_dS_clonal / syn_count) )]
   
   summary_txid[, dN_to_dS_subclonal := ifelse(
     (non_syn_count == 0 | syn_count == 0 | obs_dS_subclonal == 0),
-    NA_real_ ,(obs_dN_subclonal / non_syn_count) / (obs_dS_subclonal / syn_count) )]
+    NA_real_, (obs_dN_subclonal / non_syn_count) / (obs_dS_subclonal / syn_count) )]
   
   message("Computed dN/dS metrics from pmutdt.")
   
