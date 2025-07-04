@@ -51,29 +51,48 @@ alpha_dNdS <- 0.05
 
 # Calculate upper and lower quantiles based on selected alpha
 clonal_summary_binom[, `:=`(
-  upper_quantile_dNdS = qnbinom(alpha_dNdS/2, size = dNdS_models$negbin$theta, mu = Predicted_NegBin_dNdS, lower.tail = FALSE),
-  lower_quantile_dNdS = qnbinom(alpha_dNdS/2, size = dNdS_models$negbin$theta, mu = Predicted_NegBin_dNdS, lower.tail = TRUE)
+  upper_quantile_dNdS = qnbinom(alpha_dNdS / 2, size = dNdS_models$negbin$theta, mu = Predicted_NegBin_dNdS, lower.tail = FALSE),
+  lower_quantile_dNdS = qnbinom(alpha_dNdS / 2, size = dNdS_models$negbin$theta, mu = Predicted_NegBin_dNdS, lower.tail = TRUE)
 )]
 
-# Get outliers and their intersections 
+# Get outliers and their intersections
+cgc_summary_binom <- clonal_summary_binom[Hugo_Symbol %in% cgc_data[["Gene Symbol"]]]
 outliers <- clonal_summary_binom[p_val < 0.05]
 outliers_dNdS <- clonal_summary_binom[p_val_dNdS < 0.05]
-outliers_intersect <- outliers_dNdS[Transcript_ID %in% outliers$Transcript_ID]
+# outliers_intersect <- outliers_dNdS[Transcript_ID %in% outliers$Transcript_ID]
+outliers_intersect <- cgc_summary_binom[Transcript_ID %in% outliers$Transcript_ID]
+outliers_intersect_dNdS <- cgc_summary_binom[Transcript_ID %in% outliers_dNdS$Transcript_ID]
 
+# Left and right tail p value for hypergeometric test, using the number of outliers in dN/dS method as K
+# phyper(
+#   nrow(outliers_intersect), 
+#   nrow(outliers_dNdS),
+#   nrow(clonal_summary_binom) - nrow(outliers_dNdS),
+#   nrow(outliers),
+#   lower.tail = TRUE # ALTER: Gene find in our method too little 
+# )
+# phyper(
+#   nrow(outliers_intersect), # k_0 
+#   nrow(outliers_dNdS), # K
+#   nrow(clonal_summary_binom) - nrow(outliers_dNdS), # N - K
+#   nrow(outliers), # n 
+#   lower.tail = FALSE # ALTER: Gene find in our method is too much
+# )
+
+
+# Right tail p values for hypergeometric test, using the number ture cancer genes as K, testing for our method and dN/dS method
 phyper(
   nrow(outliers_intersect), 
-  nrow(outliers_dNdS),
-  nrow(clonal_summary_binom) - nrow(outliers_dNdS),
+  nrow(cgc_summary_binom),
+  nrow(clonal_summary_binom) - nrow(cgc_summary_binom),
   nrow(outliers),
-  lower.tail = TRUE # ALTER: Gene find in our method too little 
+  lower.tail = FALSE # ALTER: Gene find in our method is much more than finding cancer genes by random chance
 )
 
 phyper(
-  nrow(outliers_intersect), 
+  nrow(outliers_intersect_dNdS),
+  nrow(cgc_summary_binom),
+  nrow(clonal_summary_binom) - nrow(cgc_summary_binom),
   nrow(outliers_dNdS),
-  nrow(clonal_summary_binom) - nrow(outliers_dNdS),
-  nrow(outliers),
-  lower.tail = FALSE # ALTER: Gene find in our method is too much
-)
-
-
+  lower.tail = FALSE
+) 

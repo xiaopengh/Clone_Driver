@@ -161,4 +161,4 @@ plots$test <- plots$g +
   scale_color_manual(name = "Model", values = c("Quantiles" = "blue", "Negative Binomial" = "red")) + 
   ylim(0, 1000)
 
-plots$test  
+plots$test
