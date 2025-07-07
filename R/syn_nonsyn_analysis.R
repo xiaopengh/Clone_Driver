@@ -56,7 +56,7 @@ clonal_summary_binom[, `:=`(
 )]
 
 # Get outliers and their intersections
-cgc_summary_binom <- clonal_summary_binom[Hugo_Symbol %in% cgc_data[["Gene Symbol"]]]
+cgc_summary_binom <- clonal_summary_binom[Cancer_Gene == TRUE]
 outliers <- clonal_summary_binom[p_val < 0.05]
 outliers_dNdS <- clonal_summary_binom[p_val_dNdS < 0.05]
 # outliers_intersect <- outliers_dNdS[Transcript_ID %in% outliers$Transcript_ID]
@@ -79,20 +79,25 @@ outliers_intersect_dNdS <- cgc_summary_binom[Transcript_ID %in% outliers_dNdS$Tr
 #   lower.tail = FALSE # ALTER: Gene find in our method is too much
 # )
 
-
 # Right tail p values for hypergeometric test, using the number ture cancer genes as K, testing for our method and dN/dS method
-phyper(
-  nrow(outliers_intersect), 
-  nrow(cgc_summary_binom),
-  nrow(clonal_summary_binom) - nrow(cgc_summary_binom),
-  nrow(outliers),
-  lower.tail = FALSE # ALTER: Gene find in our method is much more than finding cancer genes by random chance
+test_res <- paste0(
+  "Hypergeometric p = ", 
+  phyper(
+    nrow(outliers_intersect), 
+    nrow(cgc_summary_binom),
+    nrow(clonal_summary_binom) - nrow(cgc_summary_binom),
+    nrow(outliers),
+    lower.tail = FALSE # ALTER: Gene find in our method is much more than finding cancer genes by random chance
+  ) %>% signif(3)
 )
 
-phyper(
-  nrow(outliers_intersect_dNdS),
-  nrow(cgc_summary_binom),
-  nrow(clonal_summary_binom) - nrow(cgc_summary_binom),
-  nrow(outliers_dNdS),
-  lower.tail = FALSE
-) 
+test_res_dnds <- paste0(
+  "Hypergeometric p = ",
+  phyper(
+    nrow(outliers_intersect_dNdS),
+    nrow(cgc_summary_binom),
+    nrow(clonal_summary_binom) - nrow(cgc_summary_binom),
+    nrow(outliers_dNdS),
+    lower.tail = FALSE
+  ) %>% signif(3)
+)

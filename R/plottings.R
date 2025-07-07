@@ -28,7 +28,7 @@ plots$g_dnds <- plots$g + stat_bin_2d(mapping = aes(x = dN_to_dS_clonal, y = dN_
             linewidth = 1) +
   xlim(0, 10) + ylim(0, 10) +
   scale_color_manual(name = "Model", values = c("Poisson" = "blue", "Negative Binomial" = "red")) +
-  theme_light()
+  theme_light() + guides(fill = guide_coloursteps(order = 1), color = guide_legend(order = 2))
 
 plots$g_dnds
 
@@ -44,9 +44,9 @@ plots$g_reg <- plots$g + stat_bin_2d(mapping = aes(x = Clonal_Count, y = Subclon
             linewidth = 1) +
   geom_line(mapping = aes(x = x[ord], y = Predicted_NegBin[ord], color = "Negative Binomial"),
             linewidth = 1) +
-  xlim(0, 600) + ylim(0, 200) +
+  xlim(0, 600) + ylim(0, 600) +
   scale_color_manual(name = "Model", values = c("Poisson" = "blue", "Negative Binomial" = "red")) +
-  theme_light()
+  theme_light() + guides(fill = guide_coloursteps(order = 1), color = guide_legend(order = 2))
 
 plots$g_reg
 
@@ -97,13 +97,23 @@ plot(roc_p_val,
 #   geom_segment(mapping = aes(x = 0, y = 0, xend = 1, yend = 1), color = "red", lwd = 0.8) +
 #   labs(title = "Deviance", x = "specificity", subtitle = paste0("AUC: ", round(auc(roc_deviance), 3)))
 
-plots$p_roc <- ggroc(roc_list, aes = "color", lwd = 1.2, legacy.axes = TRUE) +
+plots$p_roc <- ggroc(roc_list, aes = "color", lwd = 0.5, legacy.axes = TRUE) +
   geom_segment(mapping = aes(x = 0, y = 0, xend = 1, yend = 1), color = "lightgray", lwd = 0.8) + 
   labs(title = "ROC Curve Comparison")
 
 plots$F1_thres <- ggplot(data = all_coords) + 
   geom_line(mapping = aes(x = threshold, y = F1_score), lwd = 0.8, color = "red") + 
   coord_cartesian(xlim = c(0, 1))
+
+plots$precision_recall <- ggplot(data = all_coords) + 
+  geom_line(mapping = aes(x = recall, y = precision), lwd = 0.8, color = "blue") + 
+  coord_cartesian(xlim = c(0, 1), ylim = c(0, 1)) +
+  labs(title = "Precision-Recall Curve", x = "Recall", y = "Precision")
+
+plots$precision <- ggplot(data = all_coords) + 
+  geom_line(mapping = aes(x = threshold, y = precision), lwd = 0.8, color = "blue") + 
+  coord_cartesian(xlim = c(0, 1)) +
+  labs(title = "Precision vs Threshold", x = "Threshold", y = "Precision")
 
 # negbin regression with clonal to subclonal plot and quantiles of upper and lower levels  
 ord <- order(x)
@@ -120,11 +130,11 @@ plots$negbin_classification <- plots$g + stat_bin_2d(mapping = aes(x = Clonal_Co
             linewidth = 0.8) +
   geom_line(mapping = aes(x = x[ord], y = Predicted_NegBin[ord], color = "Negative Binomial"),
             linewidth = 1) +
-  geom_point(data = outliers, mapping = aes(x = Clonal_Count, y = Subclonal_Count), shape = 3) +
+  geom_point(data = outliers, mapping = aes(x = Clonal_Count, y = Subclonal_Count), shape = 1, size = 3, alpha = 0.3) +
   # geom_ribbon(aes(x = x[ord], ymin = lower_quantile[ord], ymax = upper_quantile[ord]), fill = "lightgreen", alpha = 0.2) +
-  xlim(0, 600) + ylim(0, 200) +
+  xlim(0, 600) + ylim(0, 600) +
   scale_color_manual(values = c("Quantiles" = "lightgreen", "Negative Binomial" = "red")) +
-  theme_light()
+  theme_light() + guides(fill = guide_coloursteps(order = 1), color = guide_legend(order = 2))
 
 plots$negbin_classification | plots$g_reg | plots$g_dnds
 
@@ -143,10 +153,10 @@ plots$negbin_classification_dnds <- plots$g + stat_bin_2d(mapping = aes(x = dN_t
   geom_line(mapping = aes(x = v[ord.dnds], color = "Negative Binomial",
                           y = reverse_offset(Predicted_NegBin_dNdS, offset_term)[ord.dnds]),
             linewidth = 1) +
-  geom_point(data = outliers_dNdS, mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal), shape = 3) +
+  geom_point(data = outliers_dNdS, mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal), shape = 1, size = 3, alpha = 0.3) +
   xlim(0, 10) + ylim(0, 10) +
   scale_color_manual(name = "Model", values = c("Quantiles" = "blue", "Negative Binomial" = "red")) +
-  theme_light()
+  theme_light() + guides(fill = guide_coloursteps(order = 1), color = guide_legend(order = 2))
 
 plots$negbin_classification_dnds | plots$negbin_classification
 
@@ -155,10 +165,45 @@ plots$test <- plots$g +
   #           linewidth = 0.8) +
   # geom_line(mapping = aes(x = v[ord.dnds], y = upper_quantile_dNdS[ord.dnds], color = "Quantiles"),
   #           linewidth = 0.8) +
-  geom_line(mapping = aes(x = v[ord.dnds], color = "Negative Binomial",
-                          y = Predicted_NegBin_dNdS[ord.dnds]),
+  geom_line(mapping = aes(x = v[ord.dnds], color = "Predicted Raw",
+                          y = Predicted_NegBin_dNdS[ord.dnds] / 10), linewidth = 0.05) +
+  geom_line(mapping = aes(x = v[ord.dnds], color = "Predicted Trans",
+                          y = reverse_offset(Predicted_NegBin_dNdS, offset_term)[ord.dnds]),
             linewidth = 1) +
-  scale_color_manual(name = "Model", values = c("Quantiles" = "blue", "Negative Binomial" = "red")) + 
-  ylim(0, 1000)
+  scale_color_manual(name = "Model", values = c("Quantiles" = "blue", "Predicted Raw" = "#ffb732", "Predicted Trans" = "#ff3153")) + 
+  ylim(0, 50)
 
 plots$test
+
+plots$negbin_classification_true_val <- plots$negbin_classification +
+  geom_point(data = clonal_summary_binom[Cancer_Gene == TRUE], 
+             mapping = aes(x = Clonal_Count, y = Subclonal_Count), 
+             color = "red", shape = 3, size = 3) +
+  annotate("text", 
+           x = 200, y = 400,  # choose appropriate coordinates
+           label = test_res, 
+           hjust = 0, size = 5, color = "black", fontface = "italic")
+
+plots$negbin_classification_true_val
+
+plots$negbin_classification_dnds_true_val <- plots$negbin_classification_dnds +
+  geom_point(data = clonal_summary_binom[Cancer_Gene == TRUE], 
+             mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal), 
+             color = "red", shape = 3, size = 3) +
+  annotate("text", 
+           x = 3.75, y = 10,  # choose appropriate coordinates
+           label = test_res_dnds, 
+           hjust = 0, size = 5, color = "black", fontface = "italic")
+
+plots$negbin_classification_dnds_true_val
+
+# =======================================================================
+# Save plots to files
+ggsave("plots/g_reg.svg", plot = plots$g_reg, width = 12, height = 9)
+ggsave("plots/g_dnds.svg", plot = plots$g_dnds, width = 12, height = 9)
+ggsave("plots/negbin_classification.svg", plot = plots$negbin_classification, width = 12, height = 9)
+ggsave("plots/negbin_classification_dnds.svg", plot = plots$negbin_classification_dnds, width = 12, height = 9)
+ggsave("plots/p_roc.svg", plot = plots$p_roc, width = 12, height = 9)
+ggsave("plots/negbin_classification_true_val.svg", plot = plots$negbin_classification_true_val, width = 12, height = 9)
+ggsave("plots/negbin_classification_dnds_true_val.svg", plot = plots$negbin_classification_dnds_true_val, width = 12, height = 9)
+# =======================================================================
