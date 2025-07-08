@@ -68,7 +68,7 @@ plots$h2 <- plots$g + geom_histogram(aes(x = Deviance_Residual, y = after_stat(d
 plots$h1 | plots$h2
 
 # Plot the ROC curves
-plot(roc_pearson, 
+plot(roc_pearson,
      main = "ROC Curve for Cancer Gene Prediction",
      col = "blue",
      lwd = 2,
@@ -199,11 +199,11 @@ plots$negbin_classification_dnds_true_val
 
 # =======================================================================
 # Save plots to files
-ggsave("plots/g_reg.svg", plot = plots$g_reg, width = 12, height = 9)
-ggsave("plots/g_dnds.svg", plot = plots$g_dnds, width = 12, height = 9)
-ggsave("plots/negbin_classification.svg", plot = plots$negbin_classification, width = 12, height = 9)
-ggsave("plots/negbin_classification_dnds.svg", plot = plots$negbin_classification_dnds, width = 12, height = 9)
-ggsave("plots/p_roc.svg", plot = plots$p_roc, width = 12, height = 9)
-ggsave("plots/negbin_classification_true_val.svg", plot = plots$negbin_classification_true_val, width = 12, height = 9)
-ggsave("plots/negbin_classification_dnds_true_val.svg", plot = plots$negbin_classification_dnds_true_val, width = 12, height = 9)
+# ggsave("plots/g_reg.svg", plot = plots$g_reg, width = 12, height = 9)
+# ggsave("plots/g_dnds.svg", plot = plots$g_dnds, width = 12, height = 9)
+# ggsave("plots/negbin_classification.svg", plot = plots$negbin_classification, width = 12, height = 9)
+# ggsave("plots/negbin_classification_dnds.svg", plot = plots$negbin_classification_dnds, width = 12, height = 9)
+# ggsave("plots/p_roc.svg", plot = plots$p_roc, width = 12, height = 9)
+# ggsave("plots/negbin_classification_true_val.svg", plot = plots$negbin_classification_true_val, width = 12, height = 9)
+# ggsave("plots/negbin_classification_dnds_true_val.svg", plot = plots$negbin_classification_dnds_true_val, width = 12, height = 9)
 # =======================================================================
