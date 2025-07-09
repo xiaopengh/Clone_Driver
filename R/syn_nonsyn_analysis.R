@@ -101,3 +101,10 @@ test_res_dnds <- paste0(
     lower.tail = FALSE
   ) %>% signif(3)
 )
+
+clonal_summary_binom[, `:=`(
+  p_val_poissonTest_clonal = poisson.test(c(obs_dN_clonal, obs_dS_clonal),
+                                          c(non_syn_count, syn_count))$p.value,
+  p_val_poissonTest_subclonal = poisson.test(c(obs_dN_subclonal, obs_dS_subclonal),
+                                             c(non_syn_count, syn_count))$p.value
+), by = 1:nrow(clonal_summary_binom)]
