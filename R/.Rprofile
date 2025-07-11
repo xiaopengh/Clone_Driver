@@ -19,3 +19,11 @@ if (interactive() && Sys.getenv("TERM_PROGRAM") == "vscode") {
 }
 
 source("renv/activate.R")
+
+# Load required packages
+library(data.table)
+library(MASS)  # For negative binomial
+library(pROC)  # For ROC curves
+library(dplyr) # For pipe operators
+library(ggplot2)
+library(patchwork)

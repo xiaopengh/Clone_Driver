@@ -197,6 +197,12 @@ plots$negbin_classification_dnds_true_val <- plots$negbin_classification_dnds +
 
 plots$negbin_classification_dnds_true_val
 
+hist(clonal_summary_binom$p_val_poissonTest_clonal, 
+     breaks = 100, main = "Poisson Test p-values (Clonal)", xlab = "p-value", col = "lightblue")
+
+hist(clonal_summary_binom$p_val_poissonTest_subclonal, 
+     breaks = 100, main = "Poisson Test p-values (Subclonal)", xlab = "p-value", col = "lightgreen")
+
 # =======================================================================
 # Save plots to files
 ggsave("plots/g_reg.svg", plot = plots$g_reg, width = 12, height = 9)
