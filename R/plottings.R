@@ -203,6 +203,21 @@ hist(clonal_summary_binom$p_val_poissonTest_clonal,
 hist(clonal_summary_binom$p_val_poissonTest_subclonal, 
      breaks = 100, main = "Poisson Test p-values (Subclonal)", xlab = "p-value", col = "lightgreen")
 
+plots$negbin_classification_dnds + 
+  geom_point(data = clonal_summary_binom[!is.na(significance)], 
+             mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, color = significance), 
+             shape = 3, size = 3) +
+  scale_color_manual(values = c("Clonal" = "blue", "Subclonal" = "green", "Both" = "purple")) +
+  labs(title = "Negative Binomial Classification with dN/dS True Values",
+       color = "Significance source")
+
+plot(((1:length(v_pvals)) / length(v_pvals)) * 0.05, type = "l", col = "blue", 
+    lwd = 2, xlab = "Ranked p-values", ylab = "Threshold",
+    main = "Benjamini-Hochberg Procedure")
+v_pvals <- clonal_summary_binom$p_val_poissonTest_clonal
+ord_v_pvals <- order(v_pvals)
+points(v_pvals[ord_v_pvals], col = "red", cex = 0.5)
+
 # =======================================================================
 # Save plots to files
 ggsave("plots/g_reg.svg", plot = plots$g_reg, width = 12, height = 9)

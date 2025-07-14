@@ -45,9 +45,21 @@ test_res_dnds <- paste0(
   ) %>% signif(3)
 )
 
+# Calculate p-values for clonal and subclonal using exact conditional binomial test
 clonal_summary_binom[, `:=`(
   p_val_poissonTest_clonal = poisson.test(c(obs_dN_clonal, obs_dS_clonal),
                                           c(non_syn_count, syn_count))$p.value,
   p_val_poissonTest_subclonal = poisson.test(c(obs_dN_subclonal, obs_dS_subclonal),
                                              c(non_syn_count, syn_count))$p.value
 ), by = 1:nrow(clonal_summary_binom)]
+
+# Label significance based on p-values from previous tests
+clonal_summary_binom[, significance := fifelse(p_val_poissonTest_clonal < 0.05 & p_val_poissonTest_subclonal < 0.05, "Both",
+                                       fifelse(p_val_poissonTest_clonal < 0.05, "Clonal",
+                                       fifelse(p_val_poissonTest_subclonal < 0.05, "Subclonal", NA_character_)))]
+
+# Adjust p-values for multiple testing
+clonal_summary_binom[, `:=`(
+  p_val_adj_poissonTest_clonal = p.adjust(p_val_poissonTest_clonal, method = "BH"),
+  p_val_adj_poissonTest_subclonal = p.adjust(p_val_poissonTest_subclonal, method = "BH")
+)]
