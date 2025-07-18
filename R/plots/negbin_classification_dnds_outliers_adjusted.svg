@@ -23753,6 +23753,14 @@
 <line x1='106.38' y1='550.57' x2='116.44' y2='550.57' style='stroke-width: 0.71; stroke: #FF0000; stroke-opacity: 0.50;' />
 <line x1='111.41' y1='555.60' x2='111.41' y2='545.54' style='stroke-width: 0.71; stroke: #FF0000; stroke-opacity: 0.50;' />
 <text x='231.80' y='38.17' style='font-size: 14.23px; font-style: italic; font-family: "Arimo";' textLength='163.98px' lengthAdjust='spacingAndGlyphs'>Hypergeometric p = 0.378</text>
+<polygon points='103.26,557.21 109.79,550.68 116.32,557.21 109.79,563.74 ' style='stroke-width: 2.83;' />
+<polygon points='692.62,391.69 699.15,385.16 705.68,391.69 699.15,398.22 ' style='stroke-width: 2.83;' />
+<polygon points='289.84,396.21 296.38,389.68 302.91,396.21 296.38,402.74 ' style='stroke-width: 2.83;' />
+<polygon points='98.88,560.21 105.42,553.68 111.95,560.21 105.42,566.74 ' style='stroke-width: 2.83;' />
+<polygon points='90.78,566.23 97.31,559.70 103.84,566.23 97.31,572.76 ' style='stroke-width: 2.83;' />
+<polygon points='260.93,385.06 267.46,378.53 273.99,385.06 267.46,391.59 ' style='stroke-width: 2.83;' />
+<text x='231.80' y='65.97' style='font-size: 14.23px; font-style: italic; font-family: "Arimo";' textLength='371.03px' lengthAdjust='spacingAndGlyphs'>Hypergeometric p (adjusted for multiple testing) = 5.48e-09</text>
+<text x='231.80' y='93.77' style='font-size: 14.23px; font-style: italic; font-family: "Arimo";' textLength='314.92px' lengthAdjust='spacingAndGlyphs'>Hypergeometric p (our method vs dnds) = 1.7e-06</text>
 <rect x='40.12' y='5.48' width='702.83' height='611.62' style='stroke-width: 1.07; stroke: #B3B3B3;' />
 </g>
 <g clip-path='url(#cpMC4wMHw4NjQuMDB8MC4wMHw2NDguMDA=)'>
@@ -23778,28 +23786,31 @@
 <text x='711.01' y='628.09' text-anchor='middle' style='font-size: 8.80px;fill: #4D4D4D; font-family: "Arimo";' textLength='17.11px' lengthAdjust='spacingAndGlyphs'>10.0</text>
 <text x='391.54' y='640.23' text-anchor='middle' style='font-size: 11.00px; font-family: "Arimo";' textLength='83.84px' lengthAdjust='spacingAndGlyphs'>dN_to_dS_clonal</text>
 <text transform='translate(13.05,311.29) rotate(-90)' text-anchor='middle' style='font-size: 11.00px; font-family: "Arimo";' textLength='101.59px' lengthAdjust='spacingAndGlyphs'>dN_to_dS_subclonal</text>
-<rect x='753.91' y='219.03' width='43.50' height='112.70' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<text x='759.39' y='233.23' style='font-size: 11.00px; font-family: "Arimo";' textLength='29.38px' lengthAdjust='spacingAndGlyphs'>Count</text>
-<rect x='759.39' y='311.85' width='17.28' height='14.40' style='stroke-width: 0.75; stroke: none; fill: #FDE725;' />
-<rect x='759.39' y='297.45' width='17.28' height='14.40' style='stroke-width: 0.75; stroke: none; fill: #7AD151;' />
-<rect x='759.39' y='283.05' width='17.28' height='14.40' style='stroke-width: 0.75; stroke: none; fill: #22A884;' />
-<rect x='759.39' y='268.65' width='17.28' height='14.40' style='stroke-width: 0.75; stroke: none; fill: #2A788E;' />
-<rect x='759.39' y='254.25' width='17.28' height='14.40' style='stroke-width: 0.75; stroke: none; fill: #414487;' />
-<rect x='759.39' y='239.85' width='17.28' height='14.40' style='stroke-width: 0.75; stroke: none; fill: #440154;' />
-<text x='782.15' y='314.88' style='font-size: 8.80px; font-family: "Arimo";' textLength='9.78px' lengthAdjust='spacingAndGlyphs'>10</text>
-<text x='782.15' y='300.48' style='font-size: 8.80px; font-family: "Arimo";' textLength='9.78px' lengthAdjust='spacingAndGlyphs'>20</text>
-<text x='782.15' y='286.08' style='font-size: 8.80px; font-family: "Arimo";' textLength='9.78px' lengthAdjust='spacingAndGlyphs'>30</text>
-<text x='782.15' y='271.68' style='font-size: 8.80px; font-family: "Arimo";' textLength='9.78px' lengthAdjust='spacingAndGlyphs'>40</text>
-<text x='782.15' y='257.28' style='font-size: 8.80px; font-family: "Arimo";' textLength='9.78px' lengthAdjust='spacingAndGlyphs'>50</text>
-<rect x='753.91' y='342.69' width='104.61' height='60.86' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<text x='759.39' y='356.89' style='font-size: 11.00px; font-family: "Arimo";' textLength='29.97px' lengthAdjust='spacingAndGlyphs'>Model</text>
-<rect x='759.39' y='363.51' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='761.12' y1='372.15' x2='774.94' y2='372.15' style='stroke-width: 2.13; stroke: #FF0000; stroke-linecap: butt;' />
-<rect x='759.39' y='380.79' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='761.12' y1='389.43' x2='774.94' y2='389.43' style='stroke-width: 1.71; stroke: #0000FF; stroke-opacity: 0.50; stroke-linecap: butt;' />
-<line x1='761.12' y1='389.43' x2='774.94' y2='389.43' style='stroke-width: 1.71; stroke: #0000FF; stroke-opacity: 0.50; stroke-linecap: butt;' />
-<text x='782.15' y='375.18' style='font-size: 8.80px; font-family: "Arimo";' textLength='70.89px' lengthAdjust='spacingAndGlyphs'>Negative Binomial</text>
-<text x='782.15' y='392.46' style='font-size: 8.80px; font-family: "Arimo";' textLength='37.16px' lengthAdjust='spacingAndGlyphs'>Quantiles</text>
+<rect x='753.91' y='210.39' width='43.50' height='112.70' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<text x='759.39' y='224.59' style='font-size: 11.00px; font-family: "Arimo";' textLength='29.38px' lengthAdjust='spacingAndGlyphs'>Count</text>
+<rect x='759.39' y='303.21' width='17.28' height='14.40' style='stroke-width: 0.75; stroke: none; fill: #FDE725;' />
+<rect x='759.39' y='288.81' width='17.28' height='14.40' style='stroke-width: 0.75; stroke: none; fill: #7AD151;' />
+<rect x='759.39' y='274.41' width='17.28' height='14.40' style='stroke-width: 0.75; stroke: none; fill: #22A884;' />
+<rect x='759.39' y='260.01' width='17.28' height='14.40' style='stroke-width: 0.75; stroke: none; fill: #2A788E;' />
+<rect x='759.39' y='245.61' width='17.28' height='14.40' style='stroke-width: 0.75; stroke: none; fill: #414487;' />
+<rect x='759.39' y='231.21' width='17.28' height='14.40' style='stroke-width: 0.75; stroke: none; fill: #440154;' />
+<text x='782.15' y='306.24' style='font-size: 8.80px; font-family: "Arimo";' textLength='9.78px' lengthAdjust='spacingAndGlyphs'>10</text>
+<text x='782.15' y='291.84' style='font-size: 8.80px; font-family: "Arimo";' textLength='9.78px' lengthAdjust='spacingAndGlyphs'>20</text>
+<text x='782.15' y='277.44' style='font-size: 8.80px; font-family: "Arimo";' textLength='9.78px' lengthAdjust='spacingAndGlyphs'>30</text>
+<text x='782.15' y='263.04' style='font-size: 8.80px; font-family: "Arimo";' textLength='9.78px' lengthAdjust='spacingAndGlyphs'>40</text>
+<text x='782.15' y='248.64' style='font-size: 8.80px; font-family: "Arimo";' textLength='9.78px' lengthAdjust='spacingAndGlyphs'>50</text>
+<rect x='753.91' y='334.05' width='104.61' height='78.14' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<text x='759.39' y='348.25' style='font-size: 11.00px; font-family: "Arimo";' textLength='29.97px' lengthAdjust='spacingAndGlyphs'>colour</text>
+<rect x='759.39' y='354.87' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='761.12' y1='363.51' x2='774.94' y2='363.51' style='stroke-width: 2.13; stroke: #FF0000; stroke-linecap: butt;' />
+<rect x='759.39' y='372.15' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<polygon points='761.50,380.79 768.03,374.26 774.56,380.79 768.03,387.32 ' style='stroke-width: 2.83;' />
+<rect x='759.39' y='389.43' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='761.12' y1='398.07' x2='774.94' y2='398.07' style='stroke-width: 1.71; stroke: #0000FF; stroke-opacity: 0.50; stroke-linecap: butt;' />
+<line x1='761.12' y1='398.07' x2='774.94' y2='398.07' style='stroke-width: 1.71; stroke: #0000FF; stroke-opacity: 0.50; stroke-linecap: butt;' />
+<text x='782.15' y='366.54' style='font-size: 8.80px; font-family: "Arimo";' textLength='70.89px' lengthAdjust='spacingAndGlyphs'>Negative Binomial</text>
+<text x='782.15' y='383.82' style='font-size: 8.80px; font-family: "Arimo";' textLength='68.44px' lengthAdjust='spacingAndGlyphs'>Outliers_adjusted</text>
+<text x='782.15' y='401.10' style='font-size: 8.80px; font-family: "Arimo";' textLength='37.16px' lengthAdjust='spacingAndGlyphs'>Quantiles</text>
 </g>
 </g>
 </svg>

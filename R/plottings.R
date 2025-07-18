@@ -115,6 +115,7 @@ plots$precision <- ggplot(data = all_coords) +
   coord_cartesian(xlim = c(0, 1)) +
   labs(title = "Precision vs Threshold", x = "Threshold", y = "Precision")
 
+# ======================================================================================
 # negbin regression with clonal to subclonal plot and quantiles of upper and lower levels  
 ord <- order(x)
 plots$negbin_classification <- plots$g + stat_bin_2d(mapping = aes(x = Clonal_Count, y = Subclonal_Count), 
@@ -130,9 +131,10 @@ plots$negbin_classification <- plots$g + stat_bin_2d(mapping = aes(x = Clonal_Co
             linewidth = 0.8) +
   geom_line(mapping = aes(x = x[ord], y = Predicted_NegBin[ord], color = "Negative Binomial"),
             linewidth = 1) +
-  geom_point(data = outliers, mapping = aes(x = Clonal_Count, y = Subclonal_Count), shape = 1, size = 3, alpha = 0.3) +
+  geom_point(data = outliers, mapping = aes(x = Clonal_Count, y = Subclonal_Count, shape = "Outliers"), size = 3, alpha = 0.3) +
   # geom_ribbon(aes(x = x[ord], ymin = lower_quantile[ord], ymax = upper_quantile[ord]), fill = "lightgreen", alpha = 0.2) +
   xlim(0, 600) + ylim(0, 600) +
+  scale_shape_manual(values = c("Outliers" = 1)) +
   scale_color_manual(values = c("Quantiles" = "lightgreen", "Negative Binomial" = "red")) +
   theme_light() + guides(fill = guide_coloursteps(order = 1), color = guide_legend(order = 2))
 
@@ -147,9 +149,9 @@ plots$negbin_classification_dnds <- plots$g + stat_bin_2d(mapping = aes(x = dN_t
                     guide = guide_coloursteps(show.limits = TRUE)) +
   geom_point(x = 1, y = 1, color = "cyan", size = 3, shape = 17) + # Corrected line
   geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(lower_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
-            linewidth = 0.8) +
+            linewidth = 0.8, alpha = 0.5) +
   geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(upper_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
-            linewidth = 0.8) +
+            linewidth = 0.8, alpha = 0.5) +
   geom_line(mapping = aes(x = v[ord.dnds], color = "Negative Binomial",
                           y = reverse_offset(Predicted_NegBin_dNdS, offset_term)[ord.dnds]),
             linewidth = 1) +
@@ -177,10 +179,11 @@ plots$test
 
 plots$negbin_classification_true_val <- plots$negbin_classification +
   geom_point(data = clonal_summary_binom[Cancer_Gene == TRUE], 
-             mapping = aes(x = Clonal_Count, y = Subclonal_Count), 
-             color = "red", shape = 3, size = 3) +
+             mapping = aes(x = Clonal_Count, y = Subclonal_Count, shape = "Cancer Gene"), 
+             color = "red", size = 3) +
+  scale_shape_manual(values = c("Outliers" = 1, "Cancer Gene" = 3)) +
   annotate("text", 
-           x = 200, y = 400,  # choose appropriate coordinates
+           x = 100, y = 575,  # choose appropriate coordinates
            label = test_res, 
            hjust = 0, size = 5, color = "black", fontface = "italic")
 
@@ -189,9 +192,9 @@ plots$negbin_classification_true_val
 plots$negbin_classification_dnds_true_val <- plots$negbin_classification_dnds +
   geom_point(data = clonal_summary_binom[Cancer_Gene == TRUE], 
              mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal), 
-             color = "red", shape = 3, size = 3) +
+             color = "red", shape = 3, size = 3, alpha = 0.5) +
   annotate("text", 
-           x = 3.75, y = 10,  # choose appropriate coordinates
+           x = 2.5, y = 10,  # choose appropriate coordinates
            label = test_res_dnds, 
            hjust = 0, size = 5, color = "black", fontface = "italic")
 
@@ -203,20 +206,83 @@ hist(clonal_summary_binom$p_val_poissonTest_clonal,
 hist(clonal_summary_binom$p_val_poissonTest_subclonal, 
      breaks = 100, main = "Poisson Test p-values (Subclonal)", xlab = "p-value", col = "lightgreen")
 
-plots$negbin_classification_dnds + 
-  geom_point(data = clonal_summary_binom[!is.na(significance)], 
-             mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, color = significance), 
-             shape = 3, size = 3) +
-  scale_color_manual(values = c("Clonal" = "blue", "Subclonal" = "green", "Both" = "purple")) +
-  labs(title = "Negative Binomial Classification with dN/dS True Values",
-       color = "Significance source")
+# plots$negbin_classification_dnds + 
+#   geom_point(data = clonal_summary_binom[!is.na(significance)], 
+#              mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, color = significance), 
+#              shape = 3, size = 3) +
+#   scale_color_manual(values = c("Clonal" = "blue", "Subclonal" = "green", "Both" = "purple")) +
+#   labs(title = "Negative Binomial Classification with dN/dS True Values",
+#        color = "Significance source")
 
+plots$negbin_classification_outliers_adjusted <- plots$negbin_classification_true_val +
+  geom_point(data = outliers_adj, 
+             mapping = aes(x = Clonal_Count, y = Subclonal_Count,
+                           color = "Outliers_adjusted"), 
+            shape = 5, size = 3, stroke = 2) +
+  annotate("text", 
+           x = 100, y = 550,  # choose appropriate coordinates
+           label = test_res_adj, 
+           hjust = 0, size = 5, color = "black", fontface = "italic") +
+  annotate("text", 
+           x = 100, y = 525,  # choose appropriate coordinates
+           label = test_res_dnds_ours, 
+           hjust = 0, size = 5, color = "black", fontface = "italic") +
+  scale_color_manual(values = c("Quantiles" = "lightgreen", "Negative Binomial" = "red",
+                                 "Outliers_adjusted" = "orange"))
+
+plots$negbin_classification_outliers_adjusted
+
+plots$negbin_classification_dnds_outliers_adjusted <- plots$negbin_classification_dnds_true_val +
+  geom_point(data = outliers_dNdS_adj, 
+             mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal,
+                           color = "Outliers_adjusted"), 
+            shape = 5, size = 3, stroke = 2) +
+  annotate("text", 
+           x = 2.5, y = 9.5,  # choose appropriate coordinates
+           label = test_res_dnds_adj, 
+           hjust = 0, size = 5, color = "black", fontface = "italic") +
+  annotate("text", 
+           x = 2.5, y = 9,  # choose appropriate coordinates
+           label = test_res_dnds_ours, 
+           hjust = 0, size = 5, color = "black", fontface = "italic") +
+  scale_color_manual(values = c("Quantiles" = "blue", "Negative Binomial" = "red",
+                                 "Outliers_adjusted" = "black"))
+
+plots$negbin_classification_dnds_outliers_adjusted
+
+# plots$negbin_classification_dnds_outliers_adjusted <- plots$negbin_classification_dnds_true_val +
+#   geom_point(data = outliers_dnds_adj, 
+#              mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal,
+#                            color = "Outliers_adjusted"), 
+#             shape = 1, size = 3) +
+#   scale_color_manual(values = c("Quantiles" = "blue", "Negative Binomial" = "red",
+#                                  "Outliers_adjusted" = "orange"))
+
+
+
+# ================================== BH Method visual =======================================
+
+v_pvals <- clonal_summary_binom$p_val_poissonTest_clonal
+ord_v_pvals <- order(v_pvals)
 plot(((1:length(v_pvals)) / length(v_pvals)) * 0.05, type = "l", col = "blue", 
     lwd = 2, xlab = "Ranked p-values", ylab = "Threshold",
     main = "Benjamini-Hochberg Procedure")
-v_pvals <- clonal_summary_binom$p_val_poissonTest_clonal
-ord_v_pvals <- order(v_pvals)
 points(v_pvals[ord_v_pvals], col = "red", cex = 0.5)
+
+v_pvals <- clonal_summary_binom$p_val_poissonTest_subclonal
+ord_v_pvals <- order(v_pvals)
+plot(((1:length(v_pvals)) / length(v_pvals)) * 0.05, type = "l", col = "blue", 
+    lwd = 2, xlab = "Ranked p-values", ylab = "Threshold",
+    main = "Benjamini-Hochberg Procedure (Subclonal)")
+points(v_pvals[ord_v_pvals], col = "red", cex = 0.5)
+
+v_pvals <- clonal_summary_binom$p_val
+ord_v_pvals <- order(v_pvals)
+plot(((1:length(v_pvals)) / length(v_pvals)) * 0.05, type = "l", col = "blue", 
+    lwd = 2, xlab = "Ranked p-values", ylab = "Threshold",
+    main = "Benjamini-Hochberg Procedure (Negative Binomial)")
+points(v_pvals[ord_v_pvals], col = "red", cex = 0.5)
+
 
 # =======================================================================
 # Save plots to files
@@ -227,4 +293,9 @@ ggsave("plots/negbin_classification_dnds.svg", plot = plots$negbin_classificatio
 ggsave("plots/p_roc.svg", plot = plots$p_roc, width = 12, height = 9)
 ggsave("plots/negbin_classification_true_val.svg", plot = plots$negbin_classification_true_val, width = 12, height = 9)
 ggsave("plots/negbin_classification_dnds_true_val.svg", plot = plots$negbin_classification_dnds_true_val, width = 12, height = 9)
+ggsave("plots/negbin_classification_outliers_adjusted.svg", plot = plots$negbin_classification_outliers_adjusted, width = 12, height = 9)
+ggsave("plots/negbin_classification_dnds_outliers_adjusted.svg",
+       plot = plots$negbin_classification_dnds_outliers_adjusted, width = 12, height = 9)
 # =======================================================================
+
+# Check https://itsfoss.com/vs-code-shortcuts/
