@@ -58,16 +58,10 @@ clonal_summary_binom[, significance := fifelse(p_val_poissonTest_clonal < 0.05 &
                                        fifelse(p_val_poissonTest_clonal < 0.05, "Clonal",
                                        fifelse(p_val_poissonTest_subclonal < 0.05, "Subclonal", NA_character_)))]
 
-# Adjust p-values for multiple testing for p-values from negative binomial regression
+# Adjust p-values for multiple testing for p-values from negative binomial regression using Benjamini-Hochberg method
 clonal_summary_binom[, `:=`(
   p_val_adjBH_negbintest = p.adjust(p_val, method = "BH")
 )]
-
-# Adjust p-values for multiple testing with Benjamini-Hochberg method
-# clonal_summary_binom[, `:=`(
-#   p_val_adjBH_poissonTest_clonal = p.adjust(p_val_poissonTest_clonal, method = "BH"),
-#   p_val_adjBH_poissonTest_subclonal = p.adjust(p_val_poissonTest_subclonal, method = "BH")
-# )]
 
 # Adjust p-values for multiple testing with Holm method
 clonal_summary_binom[, `:=`(
@@ -91,13 +85,14 @@ clonal_summary_binom[, p_val_dNdS_adjHolm_Fisher :=
   by = 1:nrow(clonal_summary_binom)
 ]
 
-outliers_adj <- clonal_summary_binom[p_val_adjBH_negbintest < 0.05]
-outliers_dNdS_adj <- clonal_summary_binom[p_val_dNdS_adjHolm < 0.05]
-outliers_dNdS_adj_Fisher <- clonal_summary_binom[p_val_dNdS_adjHolm_Fisher < 0.05]
+outliers_adj <- clonal_summary_binom[p_val_adjBH_negbintest < 0.05] # Our method outliers
+outliers_dNdS_adj <- clonal_summary_binom[p_val_dNdS_adjHolm < 0.05] # dN/dS method max fusion outliers
+outliers_dNdS_adj_Fisher <- clonal_summary_binom[p_val_dNdS_adjHolm_Fisher < 0.05] # dN/dS method Fisher fusion outliers
 
 # outliers_intersect <- outliers_dNdS[Transcript_ID %in% outliers$Transcript_ID]
 outliers_intersect_adj <- cgc_summary_binom[Transcript_ID %in% outliers_adj$Transcript_ID]
 outliers_intersect_dNdS_adj <- cgc_summary_binom[Transcript_ID %in% outliers_dNdS_adj$Transcript_ID]
+outliers_intersect_dNdS_adj_Fisher <- cgc_summary_binom[Transcript_ID %in% outliers_dNdS_adj_Fisher$Transcript_ID]
 outliers_intersect_our_dnds <- outliers_adj[Transcript_ID %in% outliers_dNdS_adj$Transcript_ID]
 outliers_intersect_our_dnds_f <- outliers_adj[Transcript_ID %in% outliers_dNdS_adj_Fisher$Transcript_ID] 
 
@@ -119,6 +114,17 @@ test_res_dnds_adj <- paste0(
     nrow(cgc_summary_binom),
     nrow(clonal_summary_binom) - nrow(cgc_summary_binom),
     nrow(outliers_dNdS_adj),
+    lower.tail = FALSE
+  ) %>% signif(3)
+)
+
+test_res_dnds_adj_f <- paste0(
+  "Hypergeometric p (adjusted for multiple testing Fisher) = ",
+  phyper(
+    nrow(outliers_intersect_dNdS_adj_Fisher),
+    nrow(cgc_summary_binom),
+    nrow(clonal_summary_binom) - nrow(cgc_summary_binom),
+    nrow(outliers_dNdS_adj_Fisher),
     lower.tail = FALSE
   ) %>% signif(3)
 )

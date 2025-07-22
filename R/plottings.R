@@ -258,10 +258,7 @@ plots$negbin_classification_dnds_outliers_adjusted
 #   scale_color_manual(values = c("Quantiles" = "blue", "Negative Binomial" = "red",
 #                                  "Outliers_adjusted" = "orange"))
 
-
-
 # ================================== BH Method visual =======================================
-
 v_pvals <- clonal_summary_binom$p_val_poissonTest_clonal
 ord_v_pvals <- order(v_pvals)
 plot(((1:length(v_pvals)) / length(v_pvals)) * 0.05, type = "l", col = "blue", 
@@ -283,7 +280,6 @@ plot(((1:length(v_pvals)) / length(v_pvals)) * 0.05, type = "l", col = "blue",
     main = "Benjamini-Hochberg Procedure (Negative Binomial)")
 points(v_pvals[ord_v_pvals], col = "red", cex = 0.5)
 
-
 # =======================================================================
 # Save plots to files
 ggsave("plots/g_reg.svg", plot = plots$g_reg, width = 12, height = 9)
@@ -297,5 +293,4 @@ ggsave("plots/negbin_classification_outliers_adjusted.svg", plot = plots$negbin_
 ggsave("plots/negbin_classification_dnds_outliers_adjusted.svg",
        plot = plots$negbin_classification_dnds_outliers_adjusted, width = 12, height = 9)
 # =======================================================================
-
 # Check https://itsfoss.com/vs-code-shortcuts/
