@@ -15,6 +15,7 @@ queryHits(ov)
 subjectHits(ov)
 gnew <- pintersect(gr1[queryHits(ov)], gr2[subjectHits(ov)])
 gnew
+gdiff <- setdiff(gr1, gnew)
 gr2 <- GRanges(c("chr1", "chr1"), IRanges(c(5, 25), c(12, 50)))
 gr1
 gr2
