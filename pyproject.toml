@@ -26,7 +26,8 @@ package-mode = false
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5" 
 ipython = "^9.0.2"   
-tqdm = "^4.67.1"     
+tqdm = "^4.67.1"
+pyreadr = "^0.5.3"
 
 # Data analysis and scientific computing libraries
 [tool.poetry.group.data.dependencies]
