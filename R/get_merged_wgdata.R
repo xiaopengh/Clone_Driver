@@ -17,3 +17,6 @@ merged_dt <- merged_dt[
   (Purity >= 0.5) &
   (CCF >= 0.2)
   ]
+
+rm(wgdata, purity_data)
+gc()
