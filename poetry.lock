@@ -702,7 +702,7 @@ version = "2.3.0"
 description = "Fundamental package for array computing in Python"
 optional = false
 python-versions = ">=3.11"
-groups = ["data", "plotting"]
+groups = ["data", "dev", "plotting"]
 files = [
     {file = "numpy-2.3.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:c3c9fdde0fa18afa1099d6257eb82890ea4f3102847e692193b54e00312a9ae9"},
     {file = "numpy-2.3.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:46d16f72c2192da7b83984aa5455baee640e33a9f1e61e656f29adf55e406c2b"},
@@ -775,7 +775,7 @@ version = "2.3.0"
 description = "Powerful data structures for data analysis, time series, and statistics"
 optional = false
 python-versions = ">=3.9"
-groups = ["data", "plotting"]
+groups = ["data", "dev", "plotting"]
 files = [
     {file = "pandas-2.3.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:625466edd01d43b75b1883a64d859168e4556261a5035b32f9d743b67ef44634"},
     {file = "pandas-2.3.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:a6872d695c896f00df46b71648eea332279ef4077a409e2fe94220208b6bb675"},
@@ -1149,6 +1149,44 @@ files = [
 diagrams = ["jinja2", "railroad-diagrams"]
 
 [[package]]
+name = "pyreadr"
+version = "0.5.3"
+description = "Reads/writes R RData and Rds files into/from pandas data frames."
+optional = false
+python-versions = "*"
+groups = ["dev"]
+files = [
+    {file = "pyreadr-0.5.3-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:a569b88bd4772617fe047a060b5843e63aac6f0d4dea4161d36cd1d6c6f92ca7"},
+    {file = "pyreadr-0.5.3-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:885d997872396bf8f1359f06f0c4737ab864810a767b76a303b83e8b90fda704"},
+    {file = "pyreadr-0.5.3-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:51f8dd37300a93a61333691be14f2ad3ce9a77d021bfc824d24de50cbec4b4ee"},
+    {file = "pyreadr-0.5.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e94475d284f80bde99d4633f1aa2055cbf0d304292fd3c6f666b8cea0530318a"},
+    {file = "pyreadr-0.5.3-cp310-cp310-win_amd64.whl", hash = "sha256:568ead1b58918babbd060543be430e57e30237dbdff7abc5afca24804e400466"},
+    {file = "pyreadr-0.5.3-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:ff2717438695a13e775837afe6f2c0474059f52f0dc9897c36a59ced37de4f5c"},
+    {file = "pyreadr-0.5.3-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:e3ac43e6edaaf60bf5fa2419cc912483a81a1e027d7da4dc83e83b3a8b87c8d1"},
+    {file = "pyreadr-0.5.3-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2f69b63a6f1360fdeb357bb5aa6350143dd2e8cde60017213e3092324b18d6eb"},
+    {file = "pyreadr-0.5.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b6e63eb64b16da58aee579699c808fc85137bd1efd998a2bb658df532033a266"},
+    {file = "pyreadr-0.5.3-cp311-cp311-win_amd64.whl", hash = "sha256:4e1dc79e2659575957209bbef119c29d35b8082eb51d2cbc3e84fa9b64efe0f9"},
+    {file = "pyreadr-0.5.3-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:d789f37edf927c38fd2b23beb908b9c3a66517ed16fbd9a0062e429ea889a465"},
+    {file = "pyreadr-0.5.3-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:f6081a4e56e2f6d77b7fbc511b14b51dbda573f41dfdccaf65867af1801c9656"},
+    {file = "pyreadr-0.5.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d3c0b98a34836d403eafed0e974b8f1d750280453337e315ac79ff457f041d9e"},
+    {file = "pyreadr-0.5.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bab98a9428ec7eddeb3b15588e549091cfa1d16713b440143162014d55b2c245"},
+    {file = "pyreadr-0.5.3-cp312-cp312-win_amd64.whl", hash = "sha256:2f99c44942cf1b2e14c75b31ade7bc240f6bf1b0e035cdf523da4360e09eb3c5"},
+    {file = "pyreadr-0.5.3-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:c852e4bad01cef4ab52ca0393eb6d3c0d6a1e66900b906ab5591a4becf439ac8"},
+    {file = "pyreadr-0.5.3-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:b8cdd92a2cbfb177afb3d69550afd0d7849415679bb27ca45ac826c5e2bc14ac"},
+    {file = "pyreadr-0.5.3-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6a54168a089b694b529ec4c9660094aa34d17e3d90d11aaf70ac296e398344e3"},
+    {file = "pyreadr-0.5.3-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:651c69396c4f15040d72b07c5751048972451191ec4101f6d3a392d1c2f20863"},
+    {file = "pyreadr-0.5.3-cp313-cp313-win_amd64.whl", hash = "sha256:e73699867a668e1f3b32f1aacf5c9019a8619a62e1aa0484f726687b61243763"},
+    {file = "pyreadr-0.5.3-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4452850ba154a5b3205d103f4e18c50021213ebd5e128b06995de8a16360a62d"},
+    {file = "pyreadr-0.5.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8b46da9e1b8aef0395c6eb45ae0abd060a610dcdc2f2549c6dbabb38064f8ac6"},
+    {file = "pyreadr-0.5.3-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4aad92b968c2a6c4ddc32dae712445007a1fdca086eed9c07c0957386e5c125d"},
+    {file = "pyreadr-0.5.3-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a1c386a9352d24c28bb25c43fd6da01454fc7e7ecccef06c99e3472d9b01d0cf"},
+    {file = "pyreadr-0.5.3.tar.gz", hash = "sha256:71517866240ed195e7933ed9c47129e738d6f23c3269556f1db4037554ecf455"},
+]
+
+[package.dependencies]
+pandas = ">=1.2.0"
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 description = "Extensions to the standard Python datetime module"
@@ -1169,7 +1207,7 @@ version = "2025.2"
 description = "World timezone definitions, modern and historical"
 optional = false
 python-versions = "*"
-groups = ["data", "plotting"]
+groups = ["data", "dev", "plotting"]
 files = [
     {file = "pytz-2025.2-py2.py3-none-any.whl", hash = "sha256:5ddf76296dd8c44c26eb8f4b6f35488f3ccbf6fbbd7adee0b7262d43f0ec2f00"},
     {file = "pytz-2025.2.tar.gz", hash = "sha256:360b9e3dbb49a209c21ad61809c7fb453643e048b38924c765813546746e81c3"},
@@ -1621,7 +1659,7 @@ version = "2025.2"
 description = "Provider of IANA time zone data"
 optional = false
 python-versions = ">=2"
-groups = ["data", "plotting"]
+groups = ["data", "dev", "plotting"]
 files = [
     {file = "tzdata-2025.2-py2.py3-none-any.whl", hash = "sha256:1a403fada01ff9221ca8044d701868fa132215d84beb92242d9acd2147f667a8"},
     {file = "tzdata-2025.2.tar.gz", hash = "sha256:b60a638fcc0daffadf82fe0f57e53d06bdec2f36c4df66280ae79bce6bd6f2b9"},
@@ -1642,4 +1680,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "f4a12d46df544d7e9afb21e9636cb7bf863e8923dd287251fd6b0c66ba0c5ed8"
+content-hash = "6b98e8253eaa695a78ba31d724bdabb00cfb081298211a0999bf64f88e6293a4"

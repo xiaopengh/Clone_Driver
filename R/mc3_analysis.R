@@ -93,6 +93,3 @@ clonal_summary_binom[, `:=`(
   upper_quantile = qnbinom(alpha / 2, size = negbin_model$theta, mu = Predicted_NegBin, lower.tail = FALSE),
   lower_quantile = qnbinom(alpha / 2, size = negbin_model$theta, mu = Predicted_NegBin, lower.tail = TRUE)
 )]
-
-
-

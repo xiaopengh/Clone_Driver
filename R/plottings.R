@@ -131,10 +131,10 @@ plots$negbin_classification <- plots$g + stat_bin_2d(mapping = aes(x = Clonal_Co
             linewidth = 0.8) +
   geom_line(mapping = aes(x = x[ord], y = Predicted_NegBin[ord], color = "Negative Binomial"),
             linewidth = 1) +
-  geom_point(data = outliers, mapping = aes(x = Clonal_Count, y = Subclonal_Count, shape = "Outliers"), size = 3, alpha = 0.3) +
+  geom_point(data = outliers, mapping = aes(x = Clonal_Count, y = Subclonal_Count, shape = "Outliers by quantiles"), size = 3, alpha = 0.3) +
   # geom_ribbon(aes(x = x[ord], ymin = lower_quantile[ord], ymax = upper_quantile[ord]), fill = "lightgreen", alpha = 0.2) +
   xlim(0, 600) + ylim(0, 600) +
-  scale_shape_manual(values = c("Outliers" = 1)) +
+  scale_shape_manual(values = c("Outliers by quantiles" = 1)) +
   scale_color_manual(values = c("Quantiles" = "lightgreen", "Negative Binomial" = "red")) +
   theme_light() + guides(fill = guide_coloursteps(order = 1), color = guide_legend(order = 2))
 
@@ -155,8 +155,9 @@ plots$negbin_classification_dnds <- plots$g + stat_bin_2d(mapping = aes(x = dN_t
   geom_line(mapping = aes(x = v[ord.dnds], color = "Negative Binomial",
                           y = reverse_offset(Predicted_NegBin_dNdS, offset_term)[ord.dnds]),
             linewidth = 1) +
-  geom_point(data = outliers_dNdS, mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal), shape = 1, size = 3, alpha = 0.3) +
+  geom_point(data = outliers_dNdS, mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, shape = "Outliers by quantiles"), size = 3, alpha = 0.3) +
   xlim(0, 10) + ylim(0, 10) +
+  scale_shape_manual(values = c("Outliers by quantiles" = 1)) +
   scale_color_manual(name = "Model", values = c("Quantiles" = "blue", "Negative Binomial" = "red")) +
   theme_light() + guides(fill = guide_coloursteps(order = 1), color = guide_legend(order = 2))
 
@@ -181,7 +182,7 @@ plots$negbin_classification_true_val <- plots$negbin_classification +
   geom_point(data = clonal_summary_binom[Cancer_Gene == TRUE], 
              mapping = aes(x = Clonal_Count, y = Subclonal_Count, shape = "Cancer Gene"), 
              color = "red", size = 3) +
-  scale_shape_manual(values = c("Outliers" = 1, "Cancer Gene" = 3)) +
+  scale_shape_manual(values = c("Outliers by quantiles" = 1, "Cancer Gene" = 3)) +
   annotate("text", 
            x = 100, y = 575,  # choose appropriate coordinates
            label = test_res, 
@@ -191,8 +192,9 @@ plots$negbin_classification_true_val
 
 plots$negbin_classification_dnds_true_val <- plots$negbin_classification_dnds +
   geom_point(data = clonal_summary_binom[Cancer_Gene == TRUE], 
-             mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal), 
-             color = "red", shape = 3, size = 3, alpha = 0.5) +
+             mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, shape = "Cancer Gene"), 
+             color = "red", size = 3, alpha = 0.5) +
+  scale_shape_manual(values = c("Outliers by quantiles" = 1, "Cancer Gene" = 3)) +
   annotate("text", 
            x = 2.5, y = 10,  # choose appropriate coordinates
            label = test_res_dnds, 
@@ -214,11 +216,95 @@ hist(clonal_summary_binom$p_val_poissonTest_subclonal,
 #   labs(title = "Negative Binomial Classification with dN/dS True Values",
 #        color = "Significance source")
 
+
+
+
+# negbin regression with dN/dS clonal to subclonal plot and quantiles of upper and lower levels 
+# outliers by poisson.test (exact conditional binomial test)
+ord.dnds <- order(v)
+plots$poissonTest_classification_dnds <- plots$g + stat_bin_2d(mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal), bins = 200) +
+  scale_fill_binned(type = "viridis",  # "gradient", "viridis"
+                    direction = -1,
+                    name = "Count",
+                    guide = guide_coloursteps(show.limits = TRUE)) +
+  geom_point(x = 1, y = 1, color = "cyan", size = 3, shape = 17) + # Corrected line
+  geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(lower_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
+            linewidth = 0.8, alpha = 0.5) +
+  geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(upper_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
+            linewidth = 0.8, alpha = 0.5) +
+  geom_line(mapping = aes(x = v[ord.dnds], color = "Negative Binomial",
+                          y = reverse_offset(Predicted_NegBin_dNdS, offset_term)[ord.dnds]),
+            linewidth = 1) +
+  geom_point(data = clonal_summary_binom[!is.na(significance)],
+             mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, colour = significance, shape = "Outliers by Poisson test"),
+             alpha = 0.8, size = 2) +
+  geom_point(data = clonal_summary_binom[Cancer_Gene == TRUE], 
+             mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, shape = "Cancer Gene"), 
+             color = "red", size = 2, alpha = 0.5) +
+  xlim(0, 10) + ylim(0, 10) +
+  scale_shape_manual(values = c("Outliers by Poisson test" = 1, "Cancer Gene" = 3)) +
+  scale_color_manual(values = c("Quantiles" = "blue", "Negative Binomial" = "red", "Clonal" = "salmon", "Subclonal" = "skyblue", "Both" = "orchid")) +
+  theme_light() + guides(fill = guide_coloursteps(order = 1), color = guide_legend(order = 2))
+
+plots$poissonTest_classification_dnds
+
+
+# Holm adjusted outliers annotated with hypergeom test
+ord.dnds <- order(v)
+plots$poissonTest_classification_dnds_adjusted <- plots$g + stat_bin_2d(mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal), bins = 200) +
+  scale_fill_binned(type = "viridis",  # "gradient", "viridis"
+                    direction = -1,
+                    name = "Count",
+                    guide = guide_coloursteps(show.limits = TRUE)) +
+  geom_point(x = 1, y = 1, color = "cyan", size = 3, shape = 17) + # Corrected line
+  geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(lower_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
+            linewidth = 0.8, alpha = 0.5) +
+  geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(upper_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
+            linewidth = 0.8, alpha = 0.5) +
+  geom_line(mapping = aes(x = v[ord.dnds], color = "Negative Binomial",
+                          y = reverse_offset(Predicted_NegBin_dNdS, offset_term)[ord.dnds]),
+            linewidth = 1) +
+  geom_point(data = outliers_dNdS_adj,
+             mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, colour = significance, shape = "Outliers by Poisson test adj"), 
+             alpha = 0.8, size = 2, stroke = 1.5) +
+  geom_point(data = clonal_summary_binom[Cancer_Gene == TRUE], 
+             mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, shape = "Cancer Gene"), 
+             color = "red", size = 2, alpha = 0.5) +
+  annotate("text", 
+           x = 1, y = 15,  # choose appropriate coordinates
+           label = test_res_dnds, 
+           hjust = 0, size = 5, color = "black", fontface = "italic") +
+  annotate("text", 
+           x = 1, y = 14.5,  # choose appropriate coordinates
+           label = test_res_dnds_adj, 
+           hjust = 0, size = 5, color = "black", fontface = "italic") +
+  annotate("text", 
+           x = 1, y = 14,  # choose appropriate coordinates
+           label = test_res_dnds_adj_f, 
+           hjust = 0, size = 5, color = "black", fontface = "italic") +
+  annotate("text", 
+           x = 1, y = 13.5,  # choose appropriate coordinates
+           label = test_res_dnds_ours, 
+           hjust = 0, size = 5, color = "black", fontface = "italic") +
+  xlim(0, 15) + ylim(0, 15) +
+  scale_shape_manual(values = c("Outliers by Poisson test adj" = 1, "Cancer Gene" = 3)) +
+  scale_color_manual(values = c("Quantiles" = "blue", "Negative Binomial" = "red", 
+                                "Clonal" = "salmon", "Subclonal" = "skyblue", "Both" = "darkgreen"),
+                     na.value = "grey") +
+  theme_light() + guides(fill = guide_coloursteps(order = 1), color = guide_legend(order = 2))
+
+plots$poissonTest_classification_dnds_adjusted
+
+
+
+
+
+# Adjusted for multiple hypothesis testing 
 plots$negbin_classification_outliers_adjusted <- plots$negbin_classification_true_val +
   geom_point(data = outliers_adj, 
              mapping = aes(x = Clonal_Count, y = Subclonal_Count,
                            color = "Outliers_adjusted"), 
-            shape = 5, size = 3, stroke = 2) +
+            shape = 5, stroke = 1) +
   annotate("text", 
            x = 100, y = 550,  # choose appropriate coordinates
            label = test_res_adj, 
@@ -228,7 +314,7 @@ plots$negbin_classification_outliers_adjusted <- plots$negbin_classification_tru
            label = test_res_dnds_ours, 
            hjust = 0, size = 5, color = "black", fontface = "italic") +
   scale_color_manual(values = c("Quantiles" = "lightgreen", "Negative Binomial" = "red",
-                                 "Outliers_adjusted" = "orange"))
+                                 "Outliers_adjusted" = "blue"))
 
 plots$negbin_classification_outliers_adjusted
 
@@ -236,7 +322,7 @@ plots$negbin_classification_dnds_outliers_adjusted <- plots$negbin_classificatio
   geom_point(data = outliers_dNdS_adj, 
              mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal,
                            color = "Outliers_adjusted"), 
-            shape = 5, size = 3, stroke = 2) +
+            shape = 5, stroke = 1) +
   annotate("text", 
            x = 2.5, y = 9.5,  # choose appropriate coordinates
            label = test_res_dnds_adj, 
@@ -246,7 +332,7 @@ plots$negbin_classification_dnds_outliers_adjusted <- plots$negbin_classificatio
            label = test_res_dnds_ours, 
            hjust = 0, size = 5, color = "black", fontface = "italic") +
   scale_color_manual(values = c("Quantiles" = "blue", "Negative Binomial" = "red",
-                                 "Outliers_adjusted" = "black"))
+                                 "Outliers_adjusted" = "darkgreen"))
 
 plots$negbin_classification_dnds_outliers_adjusted
 
