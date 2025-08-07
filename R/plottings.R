@@ -19,15 +19,16 @@ plots$g_dnds <- plots$g + stat_bin_2d(mapping = aes(x = dN_to_dS_clonal, y = dN_
                     direction = -1,
                     name = "Count",
                     guide = guide_coloursteps(show.limits = TRUE)) +
-  geom_point(x = 1, y = 1, color = "red", size = 3, shape = 17) + # Corrected line
-  geom_line(mapping = aes(x = v[ord.dnds], color = "Poisson",
-                          y = reverse_offset(Predicted_Poisson_dNdS, offset_term)[ord.dnds]),
-            linewidth = 1) +
-  geom_line(mapping = aes(x = v[ord.dnds], color = "Negative Binomial",
-                          y = reverse_offset(Predicted_NegBin_dNdS, offset_term)[ord.dnds]),
-            linewidth = 1) +
+  geom_point(aes(x = 1, y = 1, color = "neutral selection"), size = 3, shape = 17) + # Corrected line
+  # geom_line(mapping = aes(x = v[ord.dnds], color = "Poisson",
+  
+  #                         y = reverse_offset(Predicted_Poisson_dNdS, offset_term)[ord.dnds]),
+  #           linewidth = 1) +
+  # geom_line(mapping = aes(x = v[ord.dnds], color = "Negative Binomial",
+  #                         y = reverse_offset(Predicted_NegBin_dNdS, offset_term)[ord.dnds]),
+  #           linewidth = 1) +
   xlim(0, 10) + ylim(0, 10) +
-  scale_color_manual(name = "Model", values = c("Poisson" = "blue", "Negative Binomial" = "red")) +
+  scale_color_manual(values = c("neutral selection" = "cyan", "Negative Binomial" = "red")) +
   theme_light() + guides(fill = guide_coloursteps(order = 1), color = guide_legend(order = 2))
 
 plots$g_dnds
@@ -147,7 +148,7 @@ plots$negbin_classification_dnds <- plots$g + stat_bin_2d(mapping = aes(x = dN_t
                     direction = -1,
                     name = "Count",
                     guide = guide_coloursteps(show.limits = TRUE)) +
-  geom_point(x = 1, y = 1, color = "cyan", size = 3, shape = 17) + # Corrected line
+  geom_point(x = 1, y = 1, color = "red", size = 3, shape = 17) + # Corrected line
   geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(lower_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
             linewidth = 0.8, alpha = 0.5) +
   geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(upper_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
@@ -190,15 +191,15 @@ plots$negbin_classification_true_val <- plots$negbin_classification +
 
 plots$negbin_classification_true_val
 
-plots$negbin_classification_dnds_true_val <- plots$negbin_classification_dnds +
+plots$negbin_classification_dnds_true_val <- plots$g_dnds +
   geom_point(data = clonal_summary_binom[Cancer_Gene == TRUE], 
              mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, shape = "Cancer Gene"), 
-             color = "red", size = 3, alpha = 0.5) +
-  scale_shape_manual(values = c("Outliers by quantiles" = 1, "Cancer Gene" = 3)) +
-  annotate("text", 
-           x = 2.5, y = 10,  # choose appropriate coordinates
-           label = test_res_dnds, 
-           hjust = 0, size = 5, color = "black", fontface = "italic")
+             color = "red", size = 3, alpha = 0.3) +
+  scale_shape_manual(values = c("Outliers by quantiles" = 1, "Cancer Gene" = 3)) #+
+  # annotate("text", 
+  #          x = 2.5, y = 10,  # choose appropriate coordinates
+  #          label = test_res_dnds, 
+  #          hjust = 0, size = 5, color = "black", fontface = "italic")
 
 plots$negbin_classification_dnds_true_val
 
@@ -228,13 +229,13 @@ plots$poissonTest_classification_dnds <- plots$g + stat_bin_2d(mapping = aes(x =
                     name = "Count",
                     guide = guide_coloursteps(show.limits = TRUE)) +
   geom_point(x = 1, y = 1, color = "cyan", size = 3, shape = 17) + # Corrected line
-  geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(lower_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
-            linewidth = 0.8, alpha = 0.5) +
-  geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(upper_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
-            linewidth = 0.8, alpha = 0.5) +
-  geom_line(mapping = aes(x = v[ord.dnds], color = "Negative Binomial",
-                          y = reverse_offset(Predicted_NegBin_dNdS, offset_term)[ord.dnds]),
-            linewidth = 1) +
+  # geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(lower_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
+  #           linewidth = 0.8, alpha = 0.5) +
+  # geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(upper_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
+  #           linewidth = 0.8, alpha = 0.5) +
+  # geom_line(mapping = aes(x = v[ord.dnds], color = "Negative Binomial",
+  #                         y = reverse_offset(Predicted_NegBin_dNdS, offset_term)[ord.dnds]),
+  #           linewidth = 1) +
   geom_point(data = clonal_summary_binom[!is.na(significance)],
              mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, colour = significance, shape = "Outliers by Poisson test"),
              alpha = 0.8, size = 2) +
@@ -257,23 +258,23 @@ plots$poissonTest_classification_dnds_adjusted <- plots$g + stat_bin_2d(mapping 
                     name = "Count",
                     guide = guide_coloursteps(show.limits = TRUE)) +
   geom_point(x = 1, y = 1, color = "cyan", size = 3, shape = 17) + # Corrected line
-  geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(lower_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
-            linewidth = 0.8, alpha = 0.5) +
-  geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(upper_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
-            linewidth = 0.8, alpha = 0.5) +
-  geom_line(mapping = aes(x = v[ord.dnds], color = "Negative Binomial",
-                          y = reverse_offset(Predicted_NegBin_dNdS, offset_term)[ord.dnds]),
-            linewidth = 1) +
+  # geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(lower_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
+  #           linewidth = 0.8, alpha = 0.5) +
+  # geom_line(mapping = aes(x = v[ord.dnds], y = reverse_offset(upper_quantile_dNdS, offset_term)[ord.dnds], color = "Quantiles"),
+  #           linewidth = 0.8, alpha = 0.5) +
+  # geom_line(mapping = aes(x = v[ord.dnds], color = "Negative Binomial",
+  #                         y = reverse_offset(Predicted_NegBin_dNdS, offset_term)[ord.dnds]),
+  #           linewidth = 1) +
   geom_point(data = outliers_dNdS_adj,
-             mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, colour = significance, shape = "Outliers by Poisson test adj"), 
+             mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, colour = significance, shape = "Outliers by Poisson test"), 
              alpha = 0.8, size = 2, stroke = 1.5) +
   geom_point(data = clonal_summary_binom[Cancer_Gene == TRUE], 
              mapping = aes(x = dN_to_dS_clonal, y = dN_to_dS_subclonal, shape = "Cancer Gene"), 
              color = "red", size = 2, alpha = 0.5) +
-  annotate("text", 
-           x = 1, y = 15,  # choose appropriate coordinates
-           label = test_res_dnds, 
-           hjust = 0, size = 5, color = "black", fontface = "italic") +
+  # annotate("text", 
+  #          x = 1, y = 15,  # choose appropriate coordinates
+  #          label = test_res_dnds, 
+  #          hjust = 0, size = 5, color = "black", fontface = "italic") +
   annotate("text", 
            x = 1, y = 14.5,  # choose appropriate coordinates
            label = test_res_dnds_adj, 
@@ -287,7 +288,7 @@ plots$poissonTest_classification_dnds_adjusted <- plots$g + stat_bin_2d(mapping 
            label = test_res_dnds_ours, 
            hjust = 0, size = 5, color = "black", fontface = "italic") +
   xlim(0, 15) + ylim(0, 15) +
-  scale_shape_manual(values = c("Outliers by Poisson test adj" = 1, "Cancer Gene" = 3)) +
+  scale_shape_manual(values = c("Outliers by Poisson test" = 1, "Cancer Gene" = 3)) +
   scale_color_manual(values = c("Quantiles" = "blue", "Negative Binomial" = "red", 
                                 "Clonal" = "salmon", "Subclonal" = "skyblue", "Both" = "darkgreen"),
                      na.value = "grey") +
