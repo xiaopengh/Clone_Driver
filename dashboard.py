@@ -1,8 +1,8 @@
 import streamlit as st
-from src.config import CONTENT
-from src.data_handlers import load_and_process_data, extend_clonal_summary, calculate_summary_stats
-from src.models import fit_poisson_model, fit_negbin_model
-from src.visualizations import plot_scatter, plot_clonality_counts
+from helpers.config import CONTENT
+from helpers.data_handlers import load_and_process_data, extend_clonal_summary, calculate_summary_stats
+from helpers.models import fit_poisson_model, fit_negbin_model
+from helpers.visualizations import plot_scatter, plot_clonality_counts
 
 def summary_visualization(summary_binom, summary_ztest, suffix=''):
     """

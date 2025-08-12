@@ -1,0 +1,86 @@
+Update the README.md of my R-based genomic analysis project which is a continuation of tryouts and explorations in python code to clearly describe the project structure, purpose, and key scripts based on the following notes:
+
+bear in mind that the R part is main composition of this project.
+
+The most important analysis step is implemented in hyp_test.R and apply_our_method_hyp_test.R.
+
+Main Scripts and Workflow
+
+intersect_BED_GTF.R: Intersects BED mutation data with GTF gene annotations to map mutations to genes (isolated from the main workflow).
+
+extract_coding_sites, determine_SNP_effects, compute_dNdS_metrics -- important functions used in produce_mutation_theo_chances_per_txid.R (functions in helpers.R)
+
+produce_mutation_theo_chances_per_txid.R: Generates theoretical mutation chances per transcript ID. Depends on helper scripts.
+
+mc3_analysis.R: Processes MC3 mutation data.
+
+syn_nonsyn_analysis.R: Performs synonymous vs non-synonymous mutation analysis.
+
+plotting.R: Generates plots for visualizing results (coupled with hyp_test.R).
+
+#################################################
+
+### Statistical Methods for Outlier Detection ###
+
+Our method identifies significant genes or regions by applying two complementary statistical tests:
+
+I - Poisson Test
+
+Goal: Detect whether the observed ratio of mutation types (e.g., clonal vs subclonal counts, or non-synonymous vs synonymous mutations) deviates significantly from the expected ratio under a Poisson process model.
+
+In hyp_test.R:
+
+1. Uses exact conditional Poisson tests for both clonal and subclonal mutation categories, comparing observed counts against expectations derived from genome-wide mutation patterns.
+
+2. Applies multiple testing corrections (Benjamini–Hochberg and Holm) and combines results using both conservative (max) and less conservative (Fisher’s method) approaches.
+
+In apply_our_method_hyp_test.R:
+
+1. Extends the Poisson test beyond MC3 coding data to broader genomic regions (including non-coding sites).
+
+2. Calculates a global clonal-to-subclonal mutation ratio across the dataset.
+
+3. Tests each region’s clonal/subclonal counts against this global ratio using the exact Poisson test.
+
+4. Applies FDR correction and identifies significant regions as outliers.
+
+II - Quantile-Based Test
+
+Goal: Detect genes or regions with mutation burdens that fall in the extreme tails of the empirical distribution, without assuming a specific parametric form.
+
+In hyp_test.R:
+
+Computes the expected distribution of mutation counts under neutral evolution assumptions.
+
+Defines significance thresholds based on selected quantiles (e.g., upper tail 5%).
+
+Classifies genes or regions exceeding these thresholds as outliers.
+
+Key Difference:
+
+The Poisson test is a parametric test that models mutation events as independent and occurring at a constant rate, allowing explicit p-value computation and adjustment for multiple testing.
+
+The quantile-based test is a non-parametric approach that flags statistical extremes purely based on the observed distribution, making fewer assumptions but potentially less powerful for small-effect signals.
+
+#################################################
+
+helpers_utr.R: Functions for UTR extraction and related tasks.
+
+extract_non_utr_range.R: Produced output_dt dataset which is then further annotated by Mike with various features like cds, enhancer_K562, lncrna_exon, mrna_intron, pri_mirna, promoter, utr3_exon, utr5_exon. The final result is cleaned_dt which will be used in intersect_annotate_cleaned_with_merged.R.
+
+merge_icgc_tcga.R: Merges ICGC and TCGA data.
+
+intersect_annotate_cleaned_with_merged.R: Intersects, annotates, and cleans mutation datasets.
+
+extract_merged.R: Extracts merged data.
+
+Dependencies
+
+List R and package dependencies used by these scripts (to be pulled from the current README or inferred from the code).
+
+Execution Order
+
+Provide a step-by-step outline of how to run the scripts in sequence, starting from intersection and data preparation, through SNP effect determination, to hypothesis testing and plotting.
+
+Mention which steps require helpers and external datasets.
+
