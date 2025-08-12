@@ -22,6 +22,7 @@ source("renv/activate.R")
 
 # Load required packages
 library(data.table)
+library(GenomicRanges)
 library(MASS)  # For negative binomial
 library(pROC)  # For ROC curves
 library(dplyr) # For pipe operators
