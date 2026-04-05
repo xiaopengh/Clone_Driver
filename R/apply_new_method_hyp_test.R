@@ -85,7 +85,7 @@ ggplot(data = clonal_summary_binom) +
 
 ggplot(data = clonal_summary_binom) + 
   stat_bin_2d(mapping = aes(x = clonal_count, y = subclonal_count),
-              alpha = 0.2, bins = 200) +
+              alpha = 1, bins = 200) +
   stat_bin_2d(data = outliers, 
               mapping = aes(x = clonal_count, y = subclonal_count), 
               alpha = 0.6, bins = 200) +
